@@ -1,0 +1,134 @@
+# RISC-V Architecture
+config LOSCFG_ARCH_RISCV32
+    bool
+    help
+      This is used to distinguish architecture.
+
+config LOSCFG_ARCH_RISCV_RV32IMC
+    bool
+    select LOSCFG_ARCH_PMU
+    help
+      32-bit RISCV architecture implementations.
+
+config LOSCFG_ARCH_RISCV_ISA_B
+    bool
+    help
+      "B" Standard Extension for Bit Manipulation.
+
+config LOSCFG_ARCH_RISCV_ISA_F
+    bool
+    help
+      "F" Standard Extension for Single-Precision Floating-Point.
+
+config LOSCFG_ARCH_RISCV_ISA_D
+    bool
+    select LOSCFG_ARCH_RISCV_ISA_F
+    help
+      "D" Standard Extension for Double-Precision Floating-Point.
+
+config LOSCFG_ARCH_RISCV_ISA_V
+    bool
+    help
+      "V" Standard Extension for Vector Operations.
+
+config LOSCFG_LCMP_CUSTOM_INST16_EXTENSIONS
+    bool
+    help
+      This is an extra custom extension for RISC-V standard C-extension. It depend on LOSCFG_ARCH_LINX_M.
+      This extension includes some 16-bit custom instructions for:
+      - arithmetic logic operations - byte/half-word sign/zero-extension operations
+      - store zero to memory operations - push/pop operations
+
+config LOSCFG_LCMP_CUSTOM_INST16_SUB_EXTENSIONS
+    bool
+    help
+      This is also an extra custom extension for RISC-V standard C-extension. It depend on LOSCFG_ARCH_LINX_M.
+      This custom extension has encoding conflicts with the RISC-V standard C-extension.
+      It can not be enabled when the RISC-V standard C-extension and D-extension are configured at the same time.
+      This extension includes some 16-bit custom instructions for:
+      - load/store byte/half-word operations
+
+config LOSCFG_LCMP_CUSTOM_INST32_EXTENSIONS
+    bool
+    help
+      These custom instructions use custom encoding space or follow RISC-V standard extension encoding. It depend on LOSCFG_ARCH_LINX_M.
+      This extension provides some 32-bit custom instructions to optimize code size and performance. It includes:
+      1.pre-shift arithmetic logic operations
+      2.immediate compare branch operations
+      3.bit manipulation operations
+      4.load/store multiple operations
+      5.integer/floating-point conditional move operations
+      6.half-precision floating-point convert operations
+      7.pre-index/post-index integer/floating-point load/store operations
+      8.integer/floating-point load/store pair operations
+      9.floating point round to integer operations
+      10.interrupt nest enable/disable operations
+      11.jump operations with large offset
+      12.gp-based load/store operations with large offset
+      13.multiply-add/sub operations
+      14.prefetch operations
+      15.stop operation for security
+
+config LOSCFG_ARCH_LINX_M
+    bool
+    select LOSCFG_ARCH_RISCV_RV32IMC
+    select LOSCFG_ARCH_RISCV32
+    select LOSCFG_RISCV_LCMP_CLIC if !LOSCFG_INTERRUPT_VENDOR
+    help
+        This is genenel setup for LinxCore m-profile which should directly
+        select this option and add specific processor cores.
+
+# Supported Processor Cores
+config LOSCFG_ARCH_LINXCORE_131
+    bool
+    select LOSCFG_ARCH_RISCV_RV32IMC
+    select LOSCFG_ARCH_RISCV32
+    select LOSCFG_RISCV_HIMIDEERV200_PLIC if !LOSCFG_INTERRUPT_VENDOR
+    help
+      linxCore131 do not belong to linxCore m-profile, so do not select LOSCFG_ARCH_LINX_M.
+
+config LOSCFG_ARCH_LINXCORE_170
+    bool
+    select LOSCFG_ARCH_LINX_M
+
+config LOSCFG_ARCH_LINXCORE_132
+    bool
+    select LOSCFG_ARCH_LINX_M
+    select LOSCFG_LCMP_CUSTOM_INST16_EXTENSIONS
+    select LOSCFG_LCMP_CUSTOM_INST32_EXTENSIONS
+
+config LOSCFG_ARCH_RISCV_EPMP
+    bool
+    help
+      RISC-V PMP enhancements extension
+
+config LOSCFG_ARCH_RISCV_TES
+    bool
+    select LOSCFG_ARCH_RISCV_EPMP
+    help
+      RISCV Trusted Execution State Extension.
+
+config LOSCFG_ARCH_LINXCORE_170_CONFIG61
+    bool
+    select LOSCFG_ARCH_LINX_M
+    select LOSCFG_ARCH_RISCV_ISA_B
+    select LOSCFG_ARCH_RISCV_ISA_D
+    select LOSCFG_LCMP_CUSTOM_INST16_EXTENSIONS
+    select LOSCFG_LCMP_CUSTOM_INST32_EXTENSIONS
+    select LOSCFG_ARCH_RISCV_TES
+
+config LOSCFG_ARCH_LINXCORE_170_CONFIG41
+    bool
+    select LOSCFG_ARCH_LINX_M
+    select LOSCFG_ARCH_RISCV_ISA_B
+    select LOSCFG_ARCH_RISCV_ISA_D
+    select LOSCFG_LCMP_CUSTOM_INST16_EXTENSIONS
+    select LOSCFG_LCMP_CUSTOM_INST32_EXTENSIONS
+
+config LOSCFG_ARCH_LINXCORE_170_CONFIG32
+    bool
+    select LOSCFG_ARCH_LINX_M
+    select LOSCFG_ARCH_RISCV_ISA_B
+    select LOSCFG_ARCH_RISCV_ISA_F
+    select LOSCFG_LCMP_CUSTOM_INST16_EXTENSIONS
+    select LOSCFG_LCMP_CUSTOM_INST32_EXTENSIONS

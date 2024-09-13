@@ -1,0 +1,313 @@
+set(MODULE_NAME usb_unified)
+
+set(COMPONENT_NAME "usb_unified")
+
+set(OPEN_SOURCES )
+set(LOCAL_SRCS_y )
+
+get_filename_component(ROOT_DIR  "${PROJECT_SOURCE_DIR}" ABSOLUTE)
+set(USB_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+set(OPENSOURCE_PATH ${ROOT_DIR}/kernel/liteos/liteos_v208.6.0_b017/Huawei_LiteOS/open_source)
+set(USB_FREEBSD_PATH ${OPENSOURCE_PATH}/freebsd/liteos/drivers/usb)
+
+set(CONTROLLER_HOST_SRC controller/usb_host)
+set(FREEBSD_CONTROLLER_HOST_SRC ${USB_FREEBSD_PATH}/${CONTROLLER_HOST_SRC})
+
+set(CONTROLLER_DEVICE_SRC ${USB_ROOT_PATH}/controller/usb_device)
+
+set(CORE_SRC core)
+set(FREEBSD_CORE_SRC ${USB_FREEBSD_PATH}/${CORE_SRC})
+
+set(GADGET_SRC gadget)
+set(FREEBSD_GADGET_SRC ${USB_FREEBSD_PATH}/${GADGET_SRC})
+
+set(IMPLEMENTATION_SRC implementation)
+set(FREEBSD_IMPLEMENTATION_SRC ${USB_FREEBSD_PATH}/${IMPLEMENTATION_SRC})
+
+set(Net_SRC net)
+set(FREEBSD_Net_SRC ${USB_FREEBSD_PATH}/${Net_SRC})
+
+set(QUIRK_SRC quirk)
+set(FREEBSD_QUIRK_SRC ${USB_FREEBSD_PATH}/${QUIRK_SRC})
+
+set(SERIAL_SRC serial)
+set(FREEBSD_SERIAL_SRC ${USB_FREEBSD_PATH}/${SERIAL_SRC})
+
+set(STORAGE_SRC storage)
+set(FREEBSD_STORAGE_SRC ${USB_FREEBSD_PATH}/${STORAGE_SRC})
+
+set(HID_SRC hid)
+set(FREEBSD_HID_SRC ${USB_FREEBSD_PATH}/${HID_SRC})
+
+set(UVC_SRC uvc)
+
+set(ADAPT_OS adapt_liteos)
+set(ADAPT_OS_PATH ${USB_ROOT_PATH}/${ADAPT_OS})
+set(ADAPT_KAL_PATH ${ADAPT_OS_PATH}/kal/include)
+set(ADAPT_OS_CONTROLLER_DEVICE_SRC ${ADAPT_OS_PATH}/controller/usb_device)
+set(ADAPT_OS_FREEBSD_USB_PATH ${USB_FREEBSD_PATH}/${ADAPT_OS})
+set(ADAPT_OS_CONTROLLER_HOST_SRC ${ADAPT_OS_PATH}/${CONTROLLER_HOST_SRC})
+
+set(NUTTX_USB_PATH ${OPENSOURCE_PATH}/incubator-nuttx/liteos/drivers/usb)
+set(NUTTX_USB_HEAD_PATH ${LITEOSTOPDIR}/compat/nuttx/include)
+
+# add global include, compile macro and options to public target #
+set(MODULE_INCLUDE_PUB)
+set(MODULE_CXXINCLUDE_PUB)
+set(MODULE_COPTS_PUB)
+set(MODULE_ASOPTS_PUB)
+set(MODULE_CXXOPTS_PUB)
+set(MODULE_CMACRO_PUB)
+set(MODULE_ASMACRO_PUB)
+set(MODULE_CXXMACRO_PUB)
+
+if(CONFIG_USB_DEBUG)
+list(APPEND MODULE_CMACRO_PUB CONFIG_USB_DEBUG)
+endif()
+
+# add local include, compile macro and options to private target #
+set(MODULE_INCLUDE_PRI
+    ${USB_ROOT_PATH}
+    ${ADAPT_OS_PATH}
+    ${NUTTX_USB_PATH}
+    ${NUTTX_USB_HEAD_PATH}
+)
+
+if(NOT ("BUILD_FLASHBOOT" IN_LIST DEFINES))
+    list(APPEND MODULE_INCLUDE_PRI ${ADAPT_KAL_PATH})
+endif()
+
+if(CONFIG_DRIVERS_USB_HOST_DRIVER)
+    list(APPEND MODULE_INCLUDE_PRI
+        ${USB_FREEBSD_PATH}
+        ${ADAPT_OS_FREEBSD_USB_PATH}
+    )
+endif()
+
+# The switch-no-default branch exists in the freebsd open source code. #
+# Therefore, the Wno-switch-default compilation option needs to be added. #
+set(MODULE_COPTS_PRI ${LITEOS_SUGGESTED_COMPILE_OPTS} -Wno-switch-default)
+set(MODULE_ASOPTS_PRI)
+set(MODULE_CXXOPTS_PRI)
+set(MODULE_CMACRO_PRI)
+set(MODULE_ASMACRO_PRI)
+set(MODULE_CXXMACRO_PRI)
+
+# add srcs to private target #
+if(CONFIG_DRIVERS_USB OR CONFIG_DRIVERS_USB_HOST_DRIVER)
+    set(USB_IMP_SRC
+        # ${ADAPT_OS_PATH}/${IMPLEMENTATION_SRC}/usb_init.c
+        # ${CMAKE_CURRENT_SOURCE_DIR}/${IMPLEMENTATION_SRC}/usb_version.c
+        # ${CMAKE_CURRENT_SOURCE_DIR}/${IMPLEMENTATION_SRC}/usb_btree.c
+        # ${CMAKE_CURRENT_SOURCE_DIR}/${IMPLEMENTATION_SRC}/_intr_ref.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/${IMPLEMENTATION_SRC}/usb_dma_cache.c
+    )
+    list(APPEND OPEN_SOURCES  ${USB_IMP_SRC})
+endif()
+
+list(APPEND LOCAL_SRCS_${CONFIG_DRIVERS_USB_HOST_DRIVER}
+    ${FREEBSD_IMPLEMENTATION_SRC}/_condvar_ref.c
+    ${FREEBSD_IMPLEMENTATION_SRC}/_timer_ref.c
+    ${FREEBSD_IMPLEMENTATION_SRC}/bsd_busspace.c
+    ${FREEBSD_IMPLEMENTATION_SRC}/usb_busdma_loader.c
+    ${FREEBSD_IMPLEMENTATION_SRC}/_sx_ref.c
+    ${ADAPT_OS_FREEBSD_USB_PATH}/${IMPLEMENTATION_SRC}/bsd_kernel.c
+    ${FREEBSD_CORE_SRC}/usb_debug.c
+    ${FREEBSD_CORE_SRC}/usb_dynamic.c
+    ${FREEBSD_CORE_SRC}/usb_parse.c
+    ${FREEBSD_CORE_SRC}/usb_error.c
+    ${FREEBSD_CORE_SRC}/usb_handle_request.c
+    ${FREEBSD_CORE_SRC}/usb_util.c
+    ${FREEBSD_CORE_SRC}/usb_lookup.c
+    ${FREEBSD_CORE_SRC}/usb_device.c
+    ${FREEBSD_CORE_SRC}/usb_process.c
+    ${FREEBSD_CORE_SRC}/usb_hub.c
+    ${FREEBSD_CORE_SRC}/usb_request.c
+    ${FREEBSD_CORE_SRC}/usb_transfer.c
+    ${FREEBSD_CORE_SRC}/usb_mbuf.c
+    ${FREEBSD_CONTROLLER_HOST_SRC}/usb_controller.c
+    ${FREEBSD_QUIRK_SRC}/usb_quirk.c
+)
+
+list(APPEND LOCAL_SRCS_${CONFIG_DRIVERS_USB2_DEVICE_CONTROLLER}
+    ${CONTROLLER_DEVICE_SRC}/dwc_otg_pcd_intr.c
+    ${CONTROLLER_DEVICE_SRC}/dwc_otg_pcd.c
+    ${CONTROLLER_DEVICE_SRC}/udc.c
+)
+
+if(CONFIG_DRIVERS_USB3_DEVICE_CONTROLLER)
+    list(APPEND LOCAL_SRCS_y
+        ${CONTROLLER_DEVICE_SRC}/cil_intr.c
+        ${CONTROLLER_DEVICE_SRC}/cil.c
+        ${CONTROLLER_DEVICE_SRC}/ep0.c
+        ${CONTROLLER_DEVICE_SRC}/linux_gadget.c
+        ${ADAPT_OS_CONTROLLER_DEVICE_SRC}/linux_plat.c
+        ${CONTROLLER_DEVICE_SRC}/pcd_intr.c
+        ${CONTROLLER_DEVICE_SRC}/pcd.c
+    )
+endif()
+
+if(CONFIG_DRIVERS_USB_MASS_STORAGE_GADGET)
+    list(APPEND LOCAL_SRCS_y
+        ${FREEBSD_GADGET_SRC}/f_mass_storage_open.c
+    )
+
+    if(NOT CONFIG_DRIVERS_USB_HOST_DRIVER)
+        list(APPEND MODULE_INCLUDE_PRI
+            ${USB_FREEBSD_PATH}
+        )
+    endif()
+endif()
+
+list(APPEND LOCAL_SRCS_${CONFIG_DRIVERS_USB_MASS_STORAGE_GADGET}
+    ${FREEBSD_GADGET_SRC}/f_mass_storage_open.c
+)
+
+list(APPEND LOCAL_SRCS_${CONFIG_DRIVERS_USB_4G_MODEM}
+    ${FREEBSD_Net_SRC}/if_cdce.c
+)
+
+list(APPEND LOCAL_SRCS_${CONFIG_DRIVERS_USB_ETHERNET}
+    ${FREEBSD_Net_SRC}/if_axe.c
+    ${FREEBSD_Net_SRC}/if_axge.c
+)
+
+list(APPEND LOCAL_SRCS_${CONFIG_DRIVERS_USB_RNDIS_HOST}
+    ${FREEBSD_Net_SRC}/if_urndis.c
+)
+
+if(CONFIG_DRIVERS_USB_4G_MODEM OR CONFIG_DRIVERS_USB_ETHERNET OR CONFIG_DRIVERS_USB_RNDIS_HOST)
+    list(APPEND LOCAL_SRCS_y
+        ${FREEBSD_Net_SRC}/usb_ethernet.c
+        ${Net_SRC}/usb_eth_drv.c
+    )
+endif()
+
+if(CONFIG_DRIVERS_USB_4G_MODEM OR CONFIG_DRIVERS_USB_SERIAL)
+    list(APPEND LOCAL_SRCS_y
+        ${FREEBSD_SERIAL_SRC}/usb_serial.c
+        ${FREEBSD_SERIAL_SRC}/u3g.c
+    )
+endif()
+
+list(APPEND LOCAL_SRCS_${CONFIG_DRIVERS_USB_HOST_UVC_CLASS}
+    ${UVC_SRC}/host_uvc.c
+)
+
+list(APPEND LOCAL_SRCS_${CONFIG_DRIVERS_USB_FIFO}
+    ${FREEBSD_CORE_SRC}/usb_dev.c
+)
+
+list(APPEND LOCAL_SRCS_${CONFIG_DRIVERS_USB_HOST_HID}
+    ${FREEBSD_HID_SRC}/uhid.c
+    ${FREEBSD_HID_SRC}/usb_hid.c
+)
+
+list(APPEND LOCAL_SRCS_${CONFIG_DRIVERS_USB_HOST_OHCI}
+    ${CONTROLLER_HOST_SRC}/ohci_hcd.c
+    ${FREEBSD_CONTROLLER_HOST_SRC}/ohci.c
+)
+
+list(APPEND LOCAL_SRCS_${CONFIG_DRIVERS_USB_HOST_EHCI}
+    ${CONTROLLER_HOST_SRC}/ehci_hcd.c
+    ${FREEBSD_CONTROLLER_HOST_SRC}/ehci.c
+)
+
+if(CONFIG_DRIVERS_USB_HOST_XHCI OR CONFIG_DRIVERS_USB_HOST_XHCI_FOR_PORT2)
+    list(APPEND LOCAL_SRCS_y
+        ${FREEBSD_CONTROLLER_HOST_SRC}/xhci.c
+        ${ADAPT_OS_CONTROLLER_HOST_SRC}/xhci_hcd.c
+    )
+endif()
+
+list(APPEND LOCAL_SRCS_${CONFIG_DRIVERS_USB_WIRELESS}
+    ${FREEBSD_CORE_SRC}/linux_usb.c
+)
+
+list(APPEND LOCAL_SRCS_${CONFIG_DRIVERS_USB_MASS_STORAGE}
+    ${FREEBSD_STORAGE_SRC}/umass.c
+)
+
+if(CONFIG_DRIVERS_USB_MASS_STORAGE)
+    list(APPEND MODULE_INCLUDE_PRI
+        ${NUTTX_USB_PATH}/${STORAGE_SRC}
+    )
+endif()
+
+set(SOURCES
+    ${LOCAL_SRCS_y}
+)
+
+set(PUBLIC_DEFINES
+LOSCFG_DRIVERS_USB
+LOSCFG_DRIVERS_USB_DWC_DRIVER
+LOSCFG_DRIVERS_USB2_DEVICE_CONTROLLER
+LOSCFG_DRIVERS_USB_GADGET
+LOSCFG_DRIVERS_USB_HID_GADGET
+LOSCFG_DRIVERS_USB_DFU_GADGET
+LOSCFG_DRIVERS_USB_COMPOSITE_GADGET
+CONFIG_DRIVERS_USB_HID_FUNC_INTERFACE
+CONFIG_DRIVERS_USB_DFU_DOWNLOAD_CALLBACK
+)
+
+set(PUBLIC_HEADER
+    ${MODULE_INCLUDE_PRI}
+)
+
+# use this when you want to add ccflags like -include xxx
+set(COMPONENT_PUBLIC_CCFLAGS
+)
+
+set(COMPONENT_CCFLAGS
+    -Wno-unused-parameter
+    -Wno-unused-variable
+)
+
+set(WHOLE_LINK
+    true
+)
+
+set(MAIN_COMPONENT
+    false
+)
+
+build_component()
+
+set(COMPONENT_NAME "usb_unified_open")
+
+set(LIBS ${CMAKE_CURRENT_SOURCE_DIR}/lib${COMPONENT_NAME}.a)
+
+set(PUBLIC_HEADER
+    ${NUTTX_USB_PATH}
+    ${CMAKE_CURRENT_SOURCE_DIR}/controller/usb_device
+)
+
+set(PRIVATE_HEADER
+    ${CMAKE_CURRENT_SOURCE_DIR}/implementation
+    ${CMAKE_CURRENT_SOURCE_DIR}/adapt_liteos
+    ${CMAKE_CURRENT_SOURCE_DIR}/adapt_liteos/implementation
+
+)
+
+set(PRIVATE_DEFINES
+)
+
+set(PUBLIC_DEFINES
+)
+
+# use this when you want to add ccflags like -include xxx
+set(COMPONENT_PUBLIC_CCFLAGS
+)
+
+set(COMPONENT_CCFLAGS
+)
+
+set(WHOLE_LINK
+    true
+)
+
+set(MAIN_COMPONENT
+    false
+)
+
+build_component()

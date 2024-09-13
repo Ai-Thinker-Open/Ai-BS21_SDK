@@ -1,0 +1,10 @@
+#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) @CompanyNameMagicTag 2024-2024. All rights reserved.
+#===============================================================================
+
+config SYSTICK_WITH_TWO_DATA_REGS
+    bool
+    prompt "Systick Calculated With Two Data Registers "
+    default n
+    depends on DRIVER_SUPPORT_SYSTICK

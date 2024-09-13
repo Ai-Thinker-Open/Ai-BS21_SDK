@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<DebugKits>
+    <GROUP FEATURE="1&lt;&lt;0,1&lt;&lt;5" ID="0x1" NAME="Application" PARAM_DEF_FILE="../nv/nv_app_struct_def.txt" USEDMODE="0">
+	<NV CATEGORY="FTM" DESCRIPTION="FTM" ID="0x1" NAME="nv_test" PARAM_NAME="sample1_type_t" PARAM_VALUE="" />
+	</GROUP>
+</DebugKits>

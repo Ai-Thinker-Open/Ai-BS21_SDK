@@ -1,0 +1,9 @@
+#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) @CompanyNameMagicTag 2023-2023. All rights reserved.
+#===============================================================================
+config CPU_TRACE_SUPPORT_LPM
+    bool
+    prompt "CPUTRACE Support low power mode, enter sleep."
+    default n
+    depends on DRIVER_SUPPORT_CPUTRACE

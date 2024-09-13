@@ -1,0 +1,71 @@
+choice
+    prompt "Select sle ble support"
+    default SUPPORT_SLE_BLE_CENTRAL_DEFAULT
+    config SUPPORT_SLE_BLE_CENTRAL_DEFAULT
+        bool "Select sle ble central default."
+    config SUPPORT_SLE_BLE_PERIPHERAL
+        bool "Select sle ble peripheral."
+    config SUPPORT_SLE_PERIPHERAL
+        bool "Select sle peripheral."
+    config SUPPORT_SLE_CENTRAL
+        bool "Select sle central."
+    config SUPPORT_BLE_PERIPHERAL
+        bool "Select ble peripheral."
+    config PRODUCT_SLE_MICROPHONE
+        bool "Select sle microphone."
+    config SUPPORT_SLEM_PERIPHERAL
+        bool "Select sle measure peripheral."
+    config SUPPORT_SLEM_CENTRAL
+        bool "Select sle measure central."
+    config PRODUCT_SLE_MEASURE_DIS
+        bool "Select sle measure dis."
+endchoice
+
+config SLE_BLE_RELEASE_SUPPORT
+    bool
+    prompt "Enable sle ble release."
+    default n
+    help
+        This option means close sle ble log.
+
+config SLE_BLE_SUPPORT
+    string
+    default "sle-ble-peripheral" if (SUPPORT_SLE_BLE_PERIPHERAL && !SLE_BLE_RELEASE_SUPPORT)
+    default "sle-ble-peripheral-release" if (SUPPORT_SLE_BLE_PERIPHERAL && SLE_BLE_RELEASE_SUPPORT)
+    default "sle-peripheral" if (SUPPORT_SLE_PERIPHERAL && !SLE_BLE_RELEASE_SUPPORT)
+    default "sle-peripheral-release" if (SUPPORT_SLE_PERIPHERAL && SLE_BLE_RELEASE_SUPPORT)
+    default "sle-central" if (SUPPORT_SLE_CENTRAL && !SLE_BLE_RELEASE_SUPPORT)
+    default "sle-central-release" if (SUPPORT_SLE_CENTRAL && SLE_BLE_RELEASE_SUPPORT)
+    default "sle-microphone" if (PRODUCT_SLE_MICROPHONE && !SLE_BLE_RELEASE_SUPPORT)
+    default "sle-microphone-release" if (PRODUCT_SLE_MICROPHONE && SLE_BLE_RELEASE_SUPPORT)
+    default "slem-peripheral" if (SUPPORT_SLEM_PERIPHERAL && !SLE_BLE_RELEASE_SUPPORT)
+    default "slem-peripheral-release" if (SUPPORT_SLEM_PERIPHERAL && SLE_BLE_RELEASE_SUPPORT)
+    default "slem-central" if (SUPPORT_SLEM_CENTRAL && !SLE_BLE_RELEASE_SUPPORT)
+    default "slem-central-release" if (SUPPORT_SLEM_CENTRAL && SLE_BLE_RELEASE_SUPPORT)
+    default "ble-peripheral" if (SUPPORT_BLE_PERIPHERAL && !SLE_BLE_RELEASE_SUPPORT)
+    default "ble-peripheral-release" if (SUPPORT_BLE_PERIPHERAL && SLE_BLE_RELEASE_SUPPORT)
+    default "sle-measure-dis" if (PRODUCT_SLE_MEASURE_DIS && !SLE_BLE_RELEASE_SUPPORT)
+    default "sle-measure-dis-release" if (PRODUCT_SLE_MEASURE_DIS && SLE_BLE_RELEASE_SUPPORT)
+
+config BT_SLE_ONLY
+    bool
+    default y if (SUPPORT_SLE_PERIPHERAL || SUPPORT_SLE_CENTRAL || SUPPORT_SLEM_PERIPHERAL || SUPPORT_SLEM_CENTRAL)
+
+config BT_BLE_ONLY
+    bool
+    default y if (SUPPORT_BLE_PERIPHERAL)
+
+
+menu "bt_host"
+    comment "Config bluetooth."
+    osource "protocol/bt/host/Kconfig"
+endmenu
+
+menu "nfc"
+    config SUPPORT_NFC_SERVICE
+    bool
+    prompt "Config nfc."
+    default n
+    help
+        This option means support NFC.
+endmenu

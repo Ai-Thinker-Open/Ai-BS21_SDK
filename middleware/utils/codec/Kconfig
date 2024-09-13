@@ -1,0 +1,12 @@
+#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) @CompanyNameMagicTag 2023-2023. All rights reserved.
+#===============================================================================
+config CODEC_ENABLE_SBC
+    bool "SBC"
+config CODEC_ENABLE_MSBC
+    bool "MSBC"
+config CODEC_ENABLE_OPUS
+    bool "OPUS"
+config CODEC_ENABLE_L2HC
+    bool "L2HC"

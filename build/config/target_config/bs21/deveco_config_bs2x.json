@@ -1,0 +1,516 @@
+{
+    "BS20-N1200": {
+        "BS20-N1200-STANDARD": {
+            "cmake": {
+                "support_task": [
+                    "build",
+                    "clean",
+                    "rebuild",
+                    "upload",
+                    "stack analysis",
+                    "image analysis",
+                    "kconfig"
+                ],
+                "build": {
+                    "build_command": "./build.py",
+                    "build_argv": "standard-bs20-n1200",
+                    "custom_build_command": {
+                        "standard-bs20-n1200": {
+                            "build_command": "./build.py",
+                            "build_argv": "standard-bs20-n1200"
+                        }
+                    }
+                },
+                "stack analysis": {
+                    "analysis_elf_path": "./output/bs20/acore/standard-bs20-n1200/application.elf",
+                    "analysis_compiler_path": "./tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/bin",
+                    "build_config_path": ""
+                },
+                "image analysis": {
+                    "analysis_elf_path": "./output/bs20/acore/standard-bs20-n1200/application.elf",
+                    "analysis_map_path": "./output/bs20/acore/standard-bs20-n1200/application.map",
+                    "analysis_compiler_path": "./tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/bin",
+                    "build_config_path": ""
+                },
+                "upload": {
+                    "upload_speed": "750000",
+                    "upload_partitions": "./tools/pkg/fwpkg/bs20/bs20_all.fwpkg",
+                    "upload_protocol": ""
+                },
+                "debug": {
+                    "debug_client": "gdb",
+                    "debug_tool": "jlink",
+                    "debug_interface": "swd",
+                    "debug_device": "CPU CORE|RISC-V|RISC-V",
+                    "debug_elf": "./output/bs20/acore/standard-bs20-n1200/application.elf"
+                },
+                "kconfig": {
+                    "menu_config_file_path": "./config.in",
+                    "menu_config_build_target": "standard-bs20-n1200",
+                    "menu_config_core": "acore",
+                    "menu_config_target_path": "./build/config/target_config/bs20/menuconfig/acore"
+                },
+                "chip config": {
+                    "series_name": "bs20",
+                    "board_build.mcu": "bs20"
+                }
+            }
+        },
+        "BS20-N1200-RCU": {
+            "cmake": {
+                "support_task": [
+                    "build",
+                    "clean",
+                    "rebuild",
+                    "upload",
+                    "stack analysis",
+                    "image analysis",
+                    "kconfig"
+                ],
+                "build": {
+                    "build_command": "./build.py",
+                    "build_argv": "bs20-n1200-rcu",
+                    "custom_build_command": {
+                        "bs20-n1200-rcu": {
+                            "build_command": "./build.py",
+                            "build_argv": "bs20-n1200-rcu"
+                        }
+                    }
+                },
+                "stack analysis": {
+                    "analysis_elf_path": "./output/bs20/acore/bs20-n1200-rcu/application.elf",
+                    "analysis_compiler_path": "./tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/bin",
+                    "build_config_path": ""
+                },
+                "image analysis": {
+                    "analysis_elf_path": "./output/bs20/acore/bs20-n1200-rcu/application.elf",
+                    "analysis_map_path": "./output/bs20/acore/bs20-n1200-rcu/application.map",
+                    "analysis_compiler_path": "./tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/bin",
+                    "build_config_path": ""
+                },
+                "upload": {
+                    "upload_speed": "750000",
+                    "upload_partitions": "./tools/pkg/fwpkg/bs20/bs20_all.fwpkg",
+                    "upload_protocol": ""
+                },
+                "debug": {
+                    "debug_client": "gdb",
+                    "debug_tool": "jlink",
+                    "debug_interface": "swd",
+                    "debug_device": "CPU CORE|RISC-V|RISC-V",
+                    "debug_elf": "./output/bs20/acore/bs20-n1200-rcu/application.elf"
+                },
+                "kconfig": {
+                    "menu_config_file_path": "./config.in",
+                    "menu_config_build_target": "bs20-n1200-rcu",
+                    "menu_config_core": "acore",
+                    "menu_config_target_path": "./build/config/target_config/bs20/menuconfig/acore"
+                },
+                "chip config": {
+                    "series_name": "bs20",
+                    "board_build.mcu": "bs20"
+                }
+            }
+        }
+    },
+    "BS21-N1100": {
+        "BS21-N1100-STANDARD": {
+            "cmake": {
+                "support_task": [
+                    "build",
+                    "clean",
+                    "rebuild",
+                    "upload",
+                    "stack analysis",
+                    "image analysis",
+                    "kconfig"
+                ],
+                "build": {
+                    "build_command": "./build.py",
+                    "build_argv": "standard-bs21-n1100",
+                    "custom_build_command": {
+                        "standard-bs21-n1100": {
+                            "build_command": "./build.py",
+                            "build_argv": "standard-bs21-n1100"
+                        }
+                    }
+                },
+                "stack analysis": {
+                    "analysis_elf_path": "./output/bs21/acore/standard-bs21-n1100/application.elf",
+                    "analysis_compiler_path": "./tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/bin",
+                    "build_config_path": ""
+                },
+                "image analysis": {
+                    "analysis_elf_path": "./output/bs21/acore/standard-bs21-n1100/application.elf",
+                    "analysis_map_path": "./output/bs21/acore/standard-bs21-n1100/application.map",
+                    "analysis_compiler_path": "./tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/bin",
+                    "build_config_path": ""
+                },
+                "upload": {
+                    "upload_speed": "750000",
+                    "upload_partitions": "./tools/pkg/fwpkg/bs21/bs21_all.fwpkg",
+                    "upload_protocol": ""
+                },
+                "debug": {
+                    "debug_client": "gdb",
+                    "debug_tool": "jlink",
+                    "debug_interface": "swd",
+                    "debug_device": "CPU CORE|RISC-V|RISC-V",
+                    "debug_elf": "./output/bs21/acore/standard-bs21-n1100/application.elf"
+                },
+                "kconfig": {
+                    "menu_config_file_path": "./config.in",
+                    "menu_config_build_target": "standard-bs21-n1100",
+                    "menu_config_core": "acore",
+                    "menu_config_target_path": "./build/config/target_config/bs21/menuconfig/acore"
+                },
+                "chip config": {
+                    "series_name": "bs21",
+                    "board_build.mcu": "bs21"
+                }
+            }
+        },
+        "BS21-N1100-RCU": {
+            "cmake": {
+                "support_task": [
+                    "build",
+                    "clean",
+                    "rebuild",
+                    "upload",
+                    "stack analysis",
+                    "image analysis",
+                    "kconfig"
+                ],
+                "build": {
+                    "build_command": "./build.py",
+                    "build_argv": "bs21-n1100-rcu",
+                    "custom_build_command": {
+                        "bs21-n1100-rcu": {
+                            "build_command": "./build.py",
+                            "build_argv": "bs21-n1100-rcu"
+                        }
+                    }
+                },
+                "stack analysis": {
+                    "analysis_elf_path": "./output/bs21/acore/bs21-n1100-rcu/application.elf",
+                    "analysis_compiler_path": "./tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/bin",
+                    "build_config_path": ""
+                },
+                "image analysis": {
+                    "analysis_elf_path": "./output/bs21/acore/bs21-n1100-rcu/application.elf",
+                    "analysis_map_path": "./output/bs21/acore/bs21-n1100-rcu/application.map",
+                    "analysis_compiler_path": "./tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/bin",
+                    "build_config_path": ""
+                },
+                "upload": {
+                    "upload_speed": "750000",
+                    "upload_partitions": "./tools/pkg/fwpkg/bs21/bs21_all.fwpkg",
+                    "upload_protocol": ""
+                },
+                "debug": {
+                    "debug_client": "gdb",
+                    "debug_tool": "jlink",
+                    "debug_interface": "swd",
+                    "debug_device": "CPU CORE|RISC-V|RISC-V",
+                    "debug_elf": "./output/bs21/acore/bs21-n1100-rcu/application.elf"
+                },
+                "kconfig": {
+                    "menu_config_file_path": "./config.in",
+                    "menu_config_build_target": "bs21-n1100-rcu",
+                    "menu_config_core": "acore",
+                    "menu_config_target_path": "./build/config/target_config/bs21/menuconfig/acore"
+                },
+                "chip config": {
+                    "series_name": "bs21",
+                    "board_build.mcu": "bs21"
+                }
+            }
+        }
+    },
+    "BS21-N1100E": {
+        "BS21-N1100E-STANDARD": {
+            "cmake": {
+                "support_task": [
+                    "build",
+                    "clean",
+                    "rebuild",
+                    "upload",
+                    "stack analysis",
+                    "image analysis",
+                    "kconfig"
+                ],
+                "build": {
+                    "build_command": "./build.py",
+                    "build_argv": "standard-bs21e-1100e",
+                    "custom_build_command": {
+                        "standard-bs21e-1100e": {
+                            "build_command": "./build.py",
+                            "build_argv": "standard-bs21e-1100e"
+                        }
+                    }
+                },
+                "stack analysis": {
+                    "analysis_elf_path": "./output/bs21e/acore/standard-bs21e-1100e/application.elf",
+                    "analysis_compiler_path": "./tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/bin",
+                    "build_config_path": ""
+                },
+                "image analysis": {
+                    "analysis_elf_path": "./output/bs21e/acore/standard-bs21e-1100e/application.elf",
+                    "analysis_map_path": "./output/bs21e/acore/standard-bs21e-1100e/application.map",
+                    "analysis_compiler_path": "./tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/bin",
+                    "build_config_path": ""
+                },
+                "upload": {
+                    "upload_speed": "750000",
+                    "upload_partitions": "./tools/pkg/fwpkg/bs21e/bs21e_all.fwpkg",
+                    "upload_protocol": ""
+                },
+                "debug": {
+                    "debug_client": "gdb",
+                    "debug_tool": "jlink",
+                    "debug_interface": "swd",
+                    "debug_device": "CPU CORE|RISC-V|RISC-V",
+                    "debug_elf": "./output/bs21e/acore/standard-bs21e-1100e/application.elf"
+                },
+                "kconfig": {
+                    "menu_config_file_path": "./config.in",
+                    "menu_config_build_target": "standard-bs21e-1100e",
+                    "menu_config_core": "acore",
+                    "menu_config_target_path": "./build/config/target_config/bs21e/menuconfig/acore"
+                },
+                "chip config": {
+                    "series_name": "bs21e",
+                    "board_build.mcu": "bs21e"
+                }
+            }
+        },
+        "BS21-N1100E-RCU": {
+            "cmake": {
+                "support_task": [
+                    "build",
+                    "clean",
+                    "rebuild",
+                    "upload",
+                    "stack analysis",
+                    "image analysis",
+                    "kconfig"
+                ],
+                "build": {
+                    "build_command": "./build.py",
+                    "build_argv": "bs21e-1100e-rcu",
+                    "custom_build_command": {
+                        "bs21e-1100e-rcu": {
+                            "build_command": "./build.py",
+                            "build_argv": "bs21e-1100e-rcu"
+                        }
+                    }
+                },
+                "stack analysis": {
+                    "analysis_elf_path": "./output/bs21e/acore/bs21e-1100e-rcu/application.elf",
+                    "analysis_compiler_path": "./tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/bin",
+                    "build_config_path": ""
+                },
+                "image analysis": {
+                    "analysis_elf_path": "./output/bs21e/acore/bs21e-1100e-rcu/application.elf",
+                    "analysis_map_path": "./output/bs21e/acore/bs21e-1100e-rcu/application.map",
+                    "analysis_compiler_path": "./tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/bin",
+                    "build_config_path": ""
+                },
+                "upload": {
+                    "upload_speed": "750000",
+                    "upload_partitions": "./tools/pkg/fwpkg/bs21e/bs21e_all.fwpkg",
+                    "upload_protocol": ""
+                },
+                "debug": {
+                    "debug_client": "gdb",
+                    "debug_tool": "jlink",
+                    "debug_interface": "swd",
+                    "debug_device": "CPU CORE|RISC-V|RISC-V",
+                    "debug_elf": "./output/bs21e/acore/bs21e-1100e-rcu/application.elf"
+                },
+                "kconfig": {
+                    "menu_config_file_path": "./config.in",
+                    "menu_config_build_target": "bs21e-1100e-rcu",
+                    "menu_config_core": "acore",
+                    "menu_config_target_path": "./build/config/target_config/bs21e/menuconfig/acore"
+                },
+                "chip config": {
+                    "series_name": "bs21e",
+                    "board_build.mcu": "bs21e"
+                }
+            }
+        },
+        "BS21-N1100E-SLP-RCU": {
+            "cmake": {
+                "support_task": [
+                    "build",
+                    "clean",
+                    "rebuild",
+                    "upload",
+                    "stack analysis",
+                    "image analysis",
+                    "kconfig"
+                ],
+                "build": {
+                    "build_command": "./build.py",
+                    "build_argv": "bs21e-1100e-slp",
+                    "custom_build_command": {
+                        "bs21e-1100e-slp": {
+                            "build_command": "./build.py",
+                            "build_argv": "bs21e-1100e-slp"
+                        }
+                    }
+                },
+                "stack analysis": {
+                    "analysis_elf_path": "./output/bs21e/acore/bs21e-1100e-slp/application.elf",
+                    "analysis_compiler_path": "./tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/bin",
+                    "build_config_path": ""
+                },
+                "image analysis": {
+                    "analysis_elf_path": "./output/bs21e/acore/bs21e-1100e-slp/application.elf",
+                    "analysis_map_path": "./output/bs21e/acore/bs21e-1100e-slp/application.map",
+                    "analysis_compiler_path": "./tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/bin",
+                    "build_config_path": ""
+                },
+                "upload": {
+                    "upload_speed": "750000",
+                    "upload_partitions": "./tools/pkg/fwpkg/bs21e/bs21e_all.fwpkg",
+                    "upload_protocol": ""
+                },
+                "debug": {
+                    "debug_client": "gdb",
+                    "debug_tool": "jlink",
+                    "debug_interface": "swd",
+                    "debug_device": "CPU CORE|RISC-V|RISC-V",
+                    "debug_elf": "./output/bs21e/acore/bs21e-1100e-slp/application.elf"
+                },
+                "kconfig": {
+                    "menu_config_file_path": "./config.in",
+                    "menu_config_build_target": "bs21e-1100e-slp",
+                    "menu_config_core": "acore",
+                    "menu_config_target_path": "./build/config/target_config/bs21e/menuconfig/acore"
+                },
+                "chip config": {
+                    "series_name": "bs21e",
+                    "board_build.mcu": "bs21e"
+                }
+            }
+        }
+    },
+    "BS22-N1200": {
+        "BS22-N1200-STANDARD": {
+            "cmake": {
+                "support_task": [
+                    "build",
+                    "clean",
+                    "rebuild",
+                    "upload",
+                    "stack analysis",
+                    "image analysis",
+                    "kconfig"
+                ],
+                "build": {
+                    "build_command": "./build.py",
+                    "build_argv": "standard-bs22-n1200",
+                    "custom_build_command": {
+                        "standard-bs22-n1200": {
+                            "build_command": "./build.py",
+                            "build_argv": "standard-bs22-n1200"
+                        }
+                    }
+                },
+                "stack analysis": {
+                    "analysis_elf_path": "./output/bs22/acore/standard-bs22-n1200/application.elf",
+                    "analysis_compiler_path": "./tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/bin",
+                    "build_config_path": ""
+                },
+                "image analysis": {
+                    "analysis_elf_path": "./output/bs22/acore/standard-bs22-n1200/application.elf",
+                    "analysis_map_path": "./output/bs22/acore/standard-bs22-n1200/application.map",
+                    "analysis_compiler_path": "./tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/bin",
+                    "build_config_path": ""
+                },
+                "upload": {
+                    "upload_speed": "750000",
+                    "upload_partitions": "./tools/pkg/fwpkg/bs22/bs22_all.fwpkg",
+                    "upload_protocol": ""
+                },
+                "debug": {
+                    "debug_client": "gdb",
+                    "debug_tool": "jlink",
+                    "debug_interface": "swd",
+                    "debug_device": "CPU CORE|RISC-V|RISC-V",
+                    "debug_elf": "./output/bs22/acore/standard-bs22-n1200/application.elf"
+                },
+                "kconfig": {
+                    "menu_config_file_path": "./config.in",
+                    "menu_config_build_target": "standard-bs22-n1200",
+                    "menu_config_core": "acore",
+                    "menu_config_target_path": "./build/config/target_config/bs22/menuconfig/acore"
+                },
+                "chip config": {
+                    "series_name": "bs22",
+                    "board_build.mcu": "bs22"
+                }
+            }
+        }
+    },
+    "BS26-N1200": {
+        "BS26-N1200-STANDARD": {
+            "cmake": {
+                "support_task": [
+                    "build",
+                    "clean",
+                    "rebuild",
+                    "upload",
+                    "stack analysis",
+                    "image analysis",
+                    "kconfig"
+                ],
+                "build": {
+                    "build_command": "./build.py",
+                    "build_argv": "standard-bs26-n1200",
+                    "custom_build_command": {
+                        "standard-bs26-n1200": {
+                            "build_command": "./build.py",
+                            "build_argv": "standard-bs26-n1200"
+                        }
+                    }
+                },
+                "stack analysis": {
+                    "analysis_elf_path": "./output/bs26/acore/standard-bs26-n1200/application.elf",
+                    "analysis_compiler_path": "./tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/bin",
+                    "build_config_path": ""
+                },
+                "image analysis": {
+                    "analysis_elf_path": "./output/bs26/acore/standard-bs26-n1200/application.elf",
+                    "analysis_map_path": "./output/bs26/acore/standard-bs26-n1200/application.map",
+                    "analysis_compiler_path": "./tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/bin",
+                    "build_config_path": ""
+                },
+                "upload": {
+                    "upload_speed": "750000",
+                    "upload_partitions": "./tools/pkg/fwpkg/bs26/bs26_all.fwpkg",
+                    "upload_protocol": ""
+                },
+                "debug": {
+                    "debug_client": "gdb",
+                    "debug_tool": "jlink",
+                    "debug_interface": "swd",
+                    "debug_device": "CPU CORE|RISC-V|RISC-V",
+                    "debug_elf": "./output/bs26/acore/standard-bs26-n1200/application.elf"
+                },
+                "kconfig": {
+                    "menu_config_file_path": "./config.in",
+                    "menu_config_build_target": "standard-bs26-n1200",
+                    "menu_config_core": "acore",
+                    "menu_config_target_path": "./build/config/target_config/bs26/menuconfig/acore"
+                },
+                "chip config": {
+                    "series_name": "bs26",
+                    "board_build.mcu": "bs26"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,15 @@
+config LOSCFG_PLATFORM
+    string
+    default "hi3731v110"      if LOSCFG_PLATFORM_HI3731V110
+
+choice
+    prompt "Board"
+    depends on LOSCFG_FAMILY_DPT
+    default LOSCFG_PLATFORM_HI3731V110
+
+config LOSCFG_PLATFORM_HI3731V110
+    bool "hi3731v110"
+    select LOSCFG_PLATFORM_HISI_RISCV
+    select LOSCFG_USING_BOARD_LD
+    select LOSCFG_DRIVERS_UART_LINUX
+endchoice

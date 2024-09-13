@@ -1,0 +1,10 @@
+[
+   {
+      "targets":[
+         "<out_root>/<chip>/acore/standard-bs20-asic",
+         "<out_root>/<chip>/acore/standard-bs20-asic-btc-only",
+         "<out_root>/<chip>/acore/standard-bs20-asic-tag"
+      ],
+      "name": "application_rom.bin"
+   }
+]

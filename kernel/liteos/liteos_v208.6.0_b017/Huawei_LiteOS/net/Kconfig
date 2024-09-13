@@ -1,0 +1,38 @@
+menu "Net"
+#config LOSCFG_NET_LWIP
+#   bool "Enable Lwip"
+#   default y
+
+#   help
+#     extend kernel include runstop, dynload, scatter and cppsupport.
+#     It can support all or some.
+
+config LOSCFG_NET_LWIP_SACK
+    bool "Enable Lwip"
+    default y
+    select LOSCFG_FS_VFS
+    select LOSCFG_LIB_STDIO
+    select LOSCFG_COMPAT_LINUX
+    select LOSCFG_COMPAT_LINUX_WAITQUEUE
+    help
+      Answer Y to enable LiteOS support lwip.
+
+config LOSCFG_NET_IPERF
+    bool "Enable Iperf"
+    depends on LOSCFG_NET_LWIP_SACK
+    default n
+    help
+      Answer Y to enable LiteOS support iperf.
+
+config LOSCFG_NET_IPERF_JITTER
+    bool "Enable Udp Jitter"
+    depends on LOSCFG_NET_IPERF
+    default n
+    help
+      Answer Y to enable Iperf support jitter statistics
+
+osource "net/telnet/Kconfig"
+endmenu
+
+
+

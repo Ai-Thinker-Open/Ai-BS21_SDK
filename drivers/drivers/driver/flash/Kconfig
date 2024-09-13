@@ -1,0 +1,76 @@
+#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) @CompanyNameMagicTag 2022-2022. All rights reserved.
+#===============================================================================
+
+config FLASH_SUPPORT_XIP
+    bool
+    prompt "Flash support xip mode"
+    default y
+    depends on DRIVER_SUPPORT_FLASH
+
+config SPI_WAIT_FIFO_LONG_TIMEOUT
+    hex
+    prompt "Max time of SPI waiting"
+    default 0xFFFFFFFF
+    depends on DRIVER_SUPPORT_FLASH
+
+config SPI_TRAN_MAX_TIMEOUT
+    hex
+    prompt "Max time of SPI transfer"
+    default 0xFFFFFFFF
+    depends on DRIVER_SUPPORT_FLASH
+
+config SPI_WAIT_READ_TIMEOUT
+    hex
+    prompt "Max time of SPI reading"
+    default 0xFFFFFFFF
+    depends on DRIVER_SUPPORT_FLASH
+
+config FLASH_POWER_ON_TIMEOUT
+    hex
+    prompt "Max time of power on"
+    default 0xFF
+    depends on DRIVER_SUPPORT_FLASH
+
+config SPI_RX_FIFO_THRESHOLD
+    hex
+    prompt "FIFO threshold of SPI RX"
+    default 0xC
+    depends on DRIVER_SUPPORT_FLASH
+
+config SPI_TX_FIFO_THRESHOLD
+    hex
+    prompt "FIFO threshold of SPI TX"
+    default 0xC
+    depends on DRIVER_SUPPORT_FLASH
+
+config FLASH_ALREADY_START
+    bool
+    prompt "Flash has been started in another binary"
+    default y
+    depends on DRIVER_SUPPORT_FLASH
+
+config FLASH_SUPPORT_LPC
+    bool
+    prompt "Flash Support low power control, control power and clock"
+    default n
+    depends on DRIVER_SUPPORT_FLASH
+
+config FLASH_SUPPORT_SPI_SINGLE_LINE_MODE
+    bool
+    prompt "Flash support spi single line mode"
+    default n
+    depends on DRIVER_SUPPORT_FLASH
+
+config FLASH_USE_SPI_SINGLE_LINE_MODE_ONLY
+    bool
+    prompt "Flash use spi single-line mode only"
+    default n
+    depends on DRIVER_SUPPORT_FLASH
+
+config FLASH_USE_CUSTOMIZED_DEVICE_INFO
+    bool
+    prompt "Flash use custom device information, which is defined in the porting"
+    default n
+    depends on DRIVER_SUPPORT_FLASH

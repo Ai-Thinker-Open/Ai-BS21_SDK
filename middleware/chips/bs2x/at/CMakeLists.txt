@@ -1,0 +1,3 @@
+add_subdirectory_if_exist(at_btc_cmd_table)
+add_subdirectory_if_exist(at_plt_cmd_table)
+add_subdirectory_if_exist(at_cmd_porting)

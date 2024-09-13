@@ -1,0 +1,238 @@
+#include "base_datatype_def.txt"
+typedef struct {
+    td_u32 file_num;
+} last_dump_start_ind_t;
+
+typedef struct {
+    char name[64];
+    td_u32 total_size;
+    td_u32 offset;
+    td_u32 size;
+    td_u32 crc;
+    td_u8 data[0];
+} last_dump_data_ind_t;
+
+typedef struct {
+    char name[64];
+    td_u32 total_size;
+} last_dump_data_ind_finish_t;
+
+typedef struct {
+    td_u8 anrEn;
+    td_u8 bfEn;
+    td_u8 afcEn;
+    td_u8 wdrcEn;
+    td_u8 wnrEn;
+    td_u8 classifyEn;
+    td_u8 transNoiseEn;
+    td_u8 stcEn;
+    td_u8 ainrEn;
+    td_u8 afcFSEn;
+    td_u8 nlmsSwitch;
+    td_u8 kalmanSwitch;
+    td_u8 aiafcEn;
+    td_u8 res[19];
+    td_u8 anrValue;
+    td_u8 bfValue;
+    td_u8 afcValue;
+    td_u8 stcValue;
+    td_u8 ainrValue;
+    td_u8 res0[11];
+    td_u8 smoothStep_WDRC;
+    td_u8 bandNums;
+    td_u8 wdrcSThr;
+    td_u8 wdrcMThr;
+    td_u8 wdrcLThr;
+    td_u8 Offset;
+    td_char micSensitivity;
+    td_char res1[9];
+    td_u8 wdrcMPO[32];
+    td_char targetSplL[32];
+    td_char targetSplM[32];
+    td_char targetSplS[32];
+    td_u16 resEn2[16];
+    td_u8 freqShiftHz;
+    td_u8 blockNum;
+    td_u8 delayBlockNum;
+    td_u8 iMu;
+    td_u8 pMin;
+    td_u8 pMax;
+    td_char res3[2];
+    td_u16 freqShiftStart;
+    td_u16 freqMin;
+    td_u16 freqMed;
+    td_u16 freqMax;
+    td_s16 res4[8];
+    td_char bandlowGain;
+    td_char bandHighGain;
+    td_u8  lastCntThr;
+    td_u8 res5;
+    td_u16 alphadNr;
+    td_u16 maxSmCeps;
+    td_u16 maxCeps;
+    td_s16 res6[3];
+    td_u32 powThr;
+    td_u32 difThr;
+    td_s16 res7[8];
+    td_u16 vpuCh;
+    td_s16 res8;
+    td_u16 stcSmCoef;
+    td_u16 stcEnerThr;
+    td_u16 micSpace;
+    td_u16 res9[3];
+    td_u16 band[36];
+    td_u16 resEn1[64];
+} iMediaHearingAidsParams;
+
+typedef struct {
+    td_s16 reserve0[AUDIO_VQE_COM_PAD_8];
+    td_u8 mic_num;
+    td_u8 mic_proc_num;
+    td_u8 ref_num;
+    td_u8 ref_proc_num;
+    td_u8 lin_out_num;
+    td_u8 out_num;
+    td_s8 init_mic_gain;
+    td_u8 mode;
+    td_u32 mic_in_sample_rate;
+    td_u32 sample_rate;
+    td_u16 up_fft_size;
+    td_u8 mic_select;
+    td_u8 ref_select;
+    td_u8 post_gain;
+    td_u8 reserve1[AUDIO_VQE_COM_PAD_3];
+    td_u32 mic_idx;
+    td_u32 ref_idx;
+    td_u8 aiwnr_enable;
+    td_u8 nnspk_enable;
+    td_u8 aec_enable;
+    td_u8 dmnr_enable;
+    td_u8 agc_enable;
+    td_u8 fmp_enable;
+    td_u8 reserve4[AUDIO_VQE_COM_PAD_2];
+    td_u8 switch_nlp;
+    td_u8 filter_num;
+    td_u8 all_parallel;
+    td_u8 x_change;
+    td_s16 x_change_gain;
+    td_u16 us_pure_delay;
+    td_u16 us_max_hidx;
+    td_u16 us_zoom_factor1;
+    td_u16 us_zoom_factor2;
+    td_u8 post_filter;
+    td_u8 post_filter2;
+    td_u8 nlms_block_num1;
+    td_u8 nlms_block_num2;
+    td_u8 nlms_ref1;
+    td_u8 nlms_ref2;
+    td_s32 res;
+    td_u16 xd_b_th_hh;
+    td_u16 frme_cnt_reverb_th;
+    td_u16 us_f0_fre1;
+    td_u16 us_f0_fre2;
+    td_u8 e_db_f0_th;
+    td_u8 high_proc_flag;
+    td_s16 dt_zoom_factor_l;
+    td_s16 dt_zoom_factor_h;
+    td_s16 sd_zoom_factor;
+    td_u8 all_parallel_block_num;
+    td_u8 cepamp;
+    td_s16 res_zoom_factor_l;
+    td_s16 res_zoom_factor_h;
+    td_u16 us_fast_filter_switch;
+    td_s16 min_gain_limit;
+    td_s16 snr_prior_limit;
+    td_s16 ht_thrd;
+    td_s16 hs_thrd;
+    td_s16 pri_noise_esti_mode;
+    td_s16 prio_snr_thr;
+    td_s16 sm_prio_snr_thr;
+    td_s16 fixed_prior_snr;
+    td_u16 post_snr_smooth_factor;
+    td_u16 spp_smooth_factor;
+    td_u16 noise_pwr_smooth_factor;
+    td_s16 refnoise_pwr_sm_factor;
+    td_s16 nr_mic_proc_num;
+    td_s16 reserve11[AUDIO_VQE_COM_PAD_11];
+    td_s16 target_level;
+    td_s16 max_gain;
+    td_s16 min_gain;
+    td_s16 up_gradient_ratio;
+    td_s16 down_gradient_ratio;
+    td_s16 decay;
+    td_s32 fast_envelop_param;
+    td_s32 slow_envelop_param;
+    td_s32 vad_threshold_prob;
+    td_s32 noise_threshold_prob;
+    td_u16 reserve9[2];
+    td_s8 comfort_flag;
+    td_s8 comfort_intensity;
+    td_s8 mode2;
+    td_s8 fmp_reserved[5];
+} audio_vqe_param_struct;
+typedef struct {
+    td_s16 module;
+    td_s16 x2bSurround;
+    td_s16 x2bSoundWidth;
+    td_s16 eqPreGainLr;
+    td_s16 eqBandsLr;
+    td_s16 eqTypeLr[12];
+    td_s16 eqGainLr[12];
+    td_s16 eqQ[2][12];
+    td_s16 eqFc[2][12];
+    td_s16 drcGain;
+    td_s16 drcParalGLr;
+    td_s16 drcLookaLr;
+    td_s16 lmtTh;
+} audio_sws_mobile_para;
+
+typedef struct {
+    td_u16 key;
+    td_u16 crc;
+} nv_read_input_t;
+
+typedef struct {
+    td_u16 ret;
+    td_u16 key;
+    td_u32 length;
+    td_u8 data[0];
+} nv_read_output_t;
+
+typedef struct {
+    td_u16 key;
+    td_u16 crc;
+    td_u32 length;
+    td_u8 value[0];
+} nv_write_input_t;
+
+typedef struct {
+    td_u32 ret;
+    td_u32 key;
+} nv_write_output_t;
+
+typedef struct {
+    td_u32 flag;
+    td_u32 transmit_id;
+} diag_sample_data_cmd_t;
+
+typedef struct {
+    td_u32 transmit_id;
+    td_u32 ret;
+    td_u32 offset;
+    td_u32 size;
+    td_u32 crc;
+    td_u32 data[1];
+} transmit_data_reply_pkt_t;
+
+typedef struct {
+    td_u32 ret;
+    td_u32 flag;
+    td_u32 transmit_id;
+} diag_sample_data_ind_t;
+
+typedef struct {
+    td_u32 transmit_id;
+    td_u32 state_code;
+    td_u32 len;
+    td_u8 data[0];
+} transmit_state_notify_pkt_t;

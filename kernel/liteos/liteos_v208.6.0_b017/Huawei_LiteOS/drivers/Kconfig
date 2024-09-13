@@ -1,0 +1,58 @@
+menu "Driver"
+
+osource "drivers/base/Kconfig"
+osource "drivers/interrupt/Kconfig"
+osource "drivers/timer/Kconfig"
+
+config LOSCFG_DRIVERS_UART_LITEOS
+    bool
+    help
+      uart is implemented using the LiteOS driver framework.
+
+osource "drivers/uart/Kconfig"
+
+osource "drivers/mmc/adapt_liteos/Kconfig"
+osource "drivers/iommu/Kconfig"
+
+config LOSCFG_DRIVERS_MTD
+    bool "Enable MTD"
+    default n
+    depends on LOSCFG_FS_VFS
+    select LOSCFG_COMPAT_LINUX
+    select LOSCFG_COMPAT_LINUX_DRIVER_BASE
+    select LOSCFG_COMPAT_LINUX_MTD_LIST
+    help
+      Answer Y to enable LiteOS support yaffs and jffs2 multipartion.
+
+osource "drivers/random/Kconfig"
+osource "drivers/usb/adapt_liteos/Kconfig"
+osource "drivers/video/Kconfig"
+osource "drivers/cipher/Kconfig"
+
+config LOSCFG_DRIVERS_USE_VENDOR_HISI_CAMERA
+    bool
+    help
+      This option will import the drivers in vendor/hisi/camera/drivers.
+      Usually only hisi camera socs can use those drivers, but maybe some
+      legacy platforms are still using vendor uart driver.
+
+      Select this if you want to use hisi camera vendor drivers.
+
+config LOSCFG_DRIVERS_VENDOR_PATH
+    string
+    default "vendor/hisi/camera/drivers" if LOSCFG_DRIVERS_USE_VENDOR_HISI_CAMERA
+
+#
+# If vendor drivers are used, for dependency concern, the vendor Kconfig needs
+# to define LOSCFG_DRIVERS_USE_VENDOR_DRIVERS. So when vendor drivers are deleted,
+# the compiling system will not reference those folders.
+#
+# Attention: When the menuconfig system importing this kconfig, the vendor path
+# config LOSCFG_DRIVERS_VENDOR_PATH is not ready yet. Therefore, the path needs
+# to be explicitly used here.
+#
+if LOSCFG_DRIVERS_USE_VENDOR_HISI_CAMERA
+osource "vendor/hisi/camera/drivers/Kconfig"
+endif
+
+endmenu

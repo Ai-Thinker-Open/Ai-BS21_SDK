@@ -1,0 +1,51 @@
+#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) @CompanyNameMagicTag 2022-2022. All rights reserved.
+#===============================================================================
+config SFC_SUPPORT_DMA
+    bool
+    prompt "SFC Support DMA."
+    default y
+    depends on DRIVER_SUPPORT_SFC
+
+config SFC_ALLOW_ERASE_WRITEBACK
+    bool
+    prompt "Allows Erase at Any Address, needs 4KB RAM at least."
+    default n
+    depends on DRIVER_SUPPORT_SFC
+
+config SFC_ALREADY_INIT
+    bool
+    prompt "SFC has been inited, need not to set reg in init/deinit func."
+    default n
+    depends on DRIVER_SUPPORT_SFC
+
+config SFC_SUPPORT_LPM
+    bool
+    prompt "SFC Support low power mode, supend and reusme."
+    default n
+    depends on DRIVER_SUPPORT_SFC
+
+config SFC_SUPPORT_DATA_CACHE
+    bool
+    prompt "SFC Support data cache"
+    default n
+    depends on DRIVER_SUPPORT_SFC
+
+config SFC_SUPPORT_RWE_INDEPENDENT
+    bool
+    prompt "Independent sfc read/write erase interface."
+    default n
+    depends on DRIVER_SUPPORT_SFC
+
+config SFC_SUPPORT_WRITE_PROTECT
+    bool
+    prompt "SFC Support write protect."
+    default n
+    depends on DRIVER_SUPPORT_SFC
+
+config SFC_USE_CUSTOMIZED_DEVICE_INFO
+    bool
+    prompt "SFC use custom device information, which is defined in the porting"
+    default n
+    depends on DRIVER_SUPPORT_SFC

@@ -1,0 +1,10 @@
+set(MODULE_y)
+list(APPEND MODULE_${LOSCFG_NET_LWIP_SACK} RivulNet/open_source/lwip/lwip-2.1.2/src)
+
+list(APPEND MODULE_${LOSCFG_NET_TELNET} telnet)
+
+list(APPEND MODULE_${LOSCFG_NET_IPERF} los_iperf)
+
+FOREACH(CUR_MODULE_y ${MODULE_y})
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/${CUR_MODULE_y})
+ENDFOREACH(CUR_MODULE_y)

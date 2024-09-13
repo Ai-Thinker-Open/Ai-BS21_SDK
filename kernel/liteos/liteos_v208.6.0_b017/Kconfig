@@ -1,0 +1,7 @@
+#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) @CompanyNameMagicTag 2023-2023. All rights reserved.
+#===============================================================================
+if CONFIG_DRIVER_SUPPORT_LITEOS_208_6_0_B017
+
+endif

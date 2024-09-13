@@ -1,0 +1,26 @@
+config LOSCFG_PLATFORM
+    string
+    default "hi3796cv300"     if LOSCFG_PLATFORM_HI3796CV300
+    default "hi3751_dmcu"     if LOSCFG_PLATFORM_HI3751_DMCU
+
+choice
+    prompt "Board"
+    depends on LOSCFG_FAMILY_STB
+    default LOSCFG_PLATFORM_HI3796CV300
+
+config LOSCFG_PLATFORM_HI3796CV300
+    bool "hi3796cv300"
+    select LOSCFG_ARCH_LINXCORE_131
+    select LOSCFG_RISCV32_M_TIMER
+    select LOSCFG_DRIVERS_UART_ARM_PL011
+    select LOSCFG_USING_BOARD_LD
+
+config LOSCFG_PLATFORM_HI3751_DMCU
+    bool "hi3751_dmcu"
+    select LOSCFG_ARCH_LINXCORE_131
+    select LOSCFG_ARCH_RISCV_ISA_F
+    select LOSCFG_RISCV32_M_TIMER
+    select LOSCFG_DRIVERS_UART_LITEOS
+    select LOSCFG_DRIVERS_UART_ARM_PL011
+    select LOSCFG_USING_BOARD_LD
+endchoice

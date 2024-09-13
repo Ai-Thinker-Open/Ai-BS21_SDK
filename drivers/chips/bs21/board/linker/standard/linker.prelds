@@ -1,0 +1,663 @@
+/*
+ * Copyright (c) @CompanyNameMagicTag 2023-2023. All rights reserved.
+ * Description:  Link script of rom target
+ * Author: @CompanyNameTag
+ * Create: 2023-02-013
+ */
+
+#include "memory_config.h"
+OUTPUT_ARCH(riscv)
+ENTRY(_start)
+
+#include "function.lds"
+#include "data.lds"
+
+#define KEEP_SORT_TEXT(lib) KEEP(SORT(lib)(.text .text* .rodata .rodata* .srodata .srodata*))
+#define KEEP_SORT_DATA(lib) KEEP(SORT(lib)(.data .data* .sdata .sdata*))
+#define KEEP_SORT_BSS(lib) KEEP(SORT(lib)(.bss .bss* .sbss .sbss* COMMON))
+
+#define SORT_TEXT(lib) SORT(lib)(.text .text* .rodata .rodata* .srodata .srodata*)
+#define SORT_DATA(lib) SORT(lib)(.data .data* .sdata .sdata*)
+#define SORT_BSS(lib) SORT(lib)(.bss .bss* .sbss .sbss*)
+
+#define KEEP_TEXT(lib) KEEP(lib(.text .text* .rodata .rodata* .srodata .srodata*))
+#define KEEP_DATA(lib) KEEP(lib(.data .data* .sdata .sdata*))
+#define KEEP_BSS(lib) KEEP(lib(.bss .bss* .sbss .sbss*))
+
+#define BTC_ROM_FUNC(func) \
+    func(*libbgtp_rom.a:) \
+
+#define BTH_ROM_FUNC(func) \
+    func(*libbg_common_rom*.a:sysdep*.o*) \
+    func(*libbt_host_rom*.a:) \
+    func(*libbg_common_rom*.a:) \
+
+#define PLAT_ROM_FUNC(func) \
+    func(*memset_s*.o*) \
+    func(*memcpy_s*.o*) \
+    func(*memmove_s*.o*) \
+    func(*strcpy_s*.o*) \
+    func(*strncpy_s*.o*) \
+    func(*strcat_s*.o*) \
+    func(*strncat_s*.o*) \
+    func(*strtok_s*.o*) \
+    func(*sprintf_s*.o*) \
+    func(*snprintf_s*.o*) \
+    func(*vsprintf_s*.o*) \
+    func(*vsnprintf_s*.o*) \
+    func(*secureprintoutput_a*.o*) \
+
+#define ROM_CHECK_OFFSET 0x80
+#define ITCM_DFX_LEN 0x400
+#define SYMBOL_ORIGIN 0xFFFFF000
+#define SYMBOL_LEN 0x200
+
+/* FLASH sector size is 2K */
+/* make this table consistent with the configuration given by the security core */
+MEMORY
+{
+    ROM                         : ORIGIN = ROM_START,                   LENGTH = ROM_LENGTH
+#ifdef CONFIG_ULTRA_DEEP_SLEEP_ENABLE
+    RETENTION_ITCM              : ORIGIN = RETENTION_RAM_ORIGIN,        LENGTH = RETENTION_RAM_LENGTH
+#endif
+#ifdef OS_DFX_SUPPORT
+    ITCM                        : ORIGIN = APP_RAMTEXT_ORIGIN,          LENGTH = APP_RAMTEXT_LENGTH - ITCM_DFX_LEN
+    ITCM_DFX                    : ORIGIN = ORIGIN(ITCM) + LENGTH(ITCM), LENGTH = ITCM_DFX_LEN
+#else
+    ITCM                        : ORIGIN = APP_RAMTEXT_ORIGIN,          LENGTH = APP_RAMTEXT_LENGTH
+#endif
+    DTCM                        : ORIGIN = APP_DTCM_ORIGIN,             LENGTH = APP_DTCM_LENGTH - PRESERVED_REGION_LENGTH
+    PRESERVE                    : ORIGIN = PRESERVED_REGION_ORIGIN,     LENGTH = PRESERVED_REGION_LENGTH
+    FLASH_STARTUP               : ORIGIN = APP_PROGRAM_ORIGIN,          LENGTH = 0x300
+    FLASH_PROGRAM               : ORIGIN = APP_PROGRAM_ORIGIN + 0x300,  LENGTH = APP_PROGRAM_LENGTH - 0x300
+    CPUTRACE_RAM                : ORIGIN = MCPU_TRACE_MEM_REGION_START, LENGTH = CPU_TRACE_MEM_REGION_LENGTH
+    SYMBOL_UNREACH              : ORIGIN = SYMBOL_ORIGIN,           LENGTH = SYMBOL_LEN
+}
+
+SECTIONS
+{
+    /* Vectors */
+    . = 0;
+    __CODE_START__ = ORIGIN(FLASH_STARTUP);
+    startup :
+    {
+        KEEP (*(.text.entry))
+        . = ALIGN(8);
+    } > FLASH_STARTUP
+
+    .version_str :
+    {
+        . = ALIGN(8);
+        KEEP (*(.flash_version))
+        . = ALIGN(8);
+    } > FLASH_STARTUP
+
+    __program_size__ =.;
+
+    .stacks (NOLOAD): ALIGN(16)
+    {
+        g_system_stack_begin = .;
+        . += APP_USER_STACK_LEN;
+        . = ALIGN(16);
+        __stack_top__ = .;
+        . += APP_IRQ_STACK_LEN;
+        . = ALIGN(16);
+        __irq_stack_top__ = .;
+        __irq_stack_top = .;
+        . += APP_EXCP_STACK_LEN;
+        . = ALIGN(16);
+        __excp_stack_top__ = .;
+        __exc_stack_top = .;
+        . += APP_NMI_STACK_LEN;
+        . = ALIGN(16);
+        __nmi_stack_top__ = .;
+        __nmi_stack_top = .;
+        g_system_stack_end = .;
+#ifdef CONFIG_SUPPORT_LOG_THREAD
+        . += LOGGING_REGION_LENGTH;
+        . = ALIGN(16);
+#endif
+    } > DTCM
+    g_system_stack_size = g_system_stack_end - g_system_stack_begin;
+    g_stack_system = g_system_stack_size;
+}
+
+SECTIONS
+{
+    .btc_romtext :
+    {
+        . = ALIGN(8);
+        BTC_ROM_FUNC(KEEP_SORT_TEXT)
+        . = ALIGN(8);
+    } > ROM
+    .bth_romtext :
+    {
+        . = ALIGN(8);
+        BTH_ROM_FUNC(KEEP_SORT_TEXT)
+        . = ALIGN(8);
+    } > ROM
+    .plt_romtext :
+    {
+        . = ALIGN(8);
+        PLAT_ROM_FUNC(KEEP_SORT_TEXT)
+        . = ALIGN(8);
+    } > ROM
+}
+
+SECTIONS
+{
+    .patch_data : ALIGN(32)
+    {
+        . = ALIGN(8);
+        __patch_data_load__ = LOADADDR(.patch_data);
+        __patch_data_begin__ = .;
+        KEEP(*(.patch_remap))
+        KEEP(*(.patch_cmp))
+        . = ALIGN(8);
+#ifdef CONFIG_ULTRA_DEEP_SLEEP_ENABLE
+    } > RETENTION_ITCM AT > FLASH_PROGRAM
+#else
+    } > ITCM AT > FLASH_PROGRAM
+#endif
+
+    __patch_data_end__ = .;
+    __patch_data_size__ = __patch_data_end__ - __patch_data_begin__;
+
+#ifdef SUPPORT_CHIP_N1200
+    .boot_rom_ram (NOLOAD):
+    {
+        . = ALIGN(8);
+        __boot_rom_start__ = .;
+        . += 0x250;
+        . = ALIGN(8);
+        __boot_rom_end__ = .;
+#ifdef CONFIG_ULTRA_DEEP_SLEEP_ENABLE
+    } > RETENTION_ITCM
+#else
+    } > ITCM
+#endif
+#endif
+
+#if defined(LITEOS_208)
+    /* liteos v208 kernel init */
+    .sysintcall.init : {
+        . = ALIGN(4);
+        __sysinitcall_start = .;
+        __sysinitcall0_start = .;
+        KEEP(*(SORT(.sysinitcall_level0_*)))
+        __sysinitcall1_start = .;
+        KEEP(*(SORT(.sysinitcall_level1_*)))
+        __sysinitcall2_start = .;
+        KEEP(*(SORT(.sysinitcall_level2_*)))
+        __sysinitcall3_start = .;
+        KEEP(*(SORT(.sysinitcall_level3_*)))
+        __sysinitcall4_start = .;
+        KEEP(*(SORT(.sysinitcall_level4_*)))
+        __sysinitcall5_start = .;
+        KEEP(*(SORT(.sysinitcall_level5_*)))
+        __sysinitcall6_start = .;
+        KEEP(*(SORT(.sysinitcall_level6_*)))
+        __sysinitcall7_start = .;
+        KEEP(*(SORT(.sysinitcall_level7_*)))
+        __sysinitcall_end = .;
+        . = ALIGN(4);
+    } > FLASH_PROGRAM
+#endif
+
+    .rom_ram_bss :
+    {
+        __romram_bss_begin__ = .;
+        . = ALIGN(32);
+        VENEER_ROM_RAM_B
+        . = ALIGN(8);
+#ifdef CONFIG_ULTRA_DEEP_SLEEP_ENABLE
+    } > RETENTION_ITCM
+#else
+    } > ITCM
+#endif
+    __romram_bss_end__ = .;
+    __romram_bss_size__ = __romram_bss_end__ - __romram_bss_begin__;
+
+    .rom_ram_text :
+    {
+        __romtext_load__ = LOADADDR(.rom_ram_text);
+        __romtext_begin__ = .;
+        . = ALIGN(8);
+        VENEER_TEXT
+        VENEER_ROM_RAM_RO
+        VENEER_ROM_FLASH_RO
+        . = ALIGN(8);
+#ifdef CONFIG_ULTRA_DEEP_SLEEP_ENABLE
+    } > RETENTION_ITCM AT > FLASH_PROGRAM
+#else
+    } > ITCM AT > FLASH_PROGRAM
+#endif
+
+    .rom_ram_data : {
+        . = ALIGN(8);
+        VENEER_ROM_RAM_D
+        *(.got)
+        *(.got*)
+        *(.igot)
+        *(.igot*)
+        . = ALIGN(8);
+#ifdef CONFIG_ULTRA_DEEP_SLEEP_ENABLE
+    } > RETENTION_ITCM AT > FLASH_PROGRAM
+#else
+    } > ITCM AT > FLASH_PROGRAM
+#endif
+
+    .plat_rom_data :
+    {
+        . = ALIGN(8);
+        PLAT_ROM_FUNC(KEEP_SORT_DATA)
+        KEEP(*(.data.strNullPointer));
+        KEEP(*(.data.strNullString));
+        KEEP(*(.data.wStrNullString));
+        . = ALIGN(8);
+#ifdef CONFIG_ULTRA_DEEP_SLEEP_ENABLE
+    } > RETENTION_ITCM AT > FLASH_PROGRAM
+#else
+    } > ITCM AT > FLASH_PROGRAM
+#endif
+    .bth_rom_data :
+    {
+        . = ALIGN(8);
+        BTH_ROM_FUNC(KEEP_SORT_DATA)
+        KEEP(*(.data.g_lemgr_ext_req_funcs));
+        KEEP(*(.data.g_smp_lesc_enable));
+        KEEP(*(.data.cmac_const_rb));
+        . = ALIGN(8);
+#ifdef CONFIG_ULTRA_DEEP_SLEEP_ENABLE
+    } > RETENTION_ITCM AT > FLASH_PROGRAM
+#else
+    } > ITCM AT > FLASH_PROGRAM
+#endif
+    .btc_rom_data :
+    {
+        . = ALIGN(8);
+        BTC_ROM_FUNC(KEEP_SORT_DATA)
+        KEEP(*(.data.g_pmu_state_handler_tab)); KEEP(*(.data.g_min_deep_sleep_slot_time)); KEEP(*(.data.g_min_light_sleep_slot_time)); KEEP(*(.data.g_ble_isr_process_tbl)); KEEP(*(.data.g_current_hw_timer)); KEEP(*(.data.g_last_update_time)); KEEP(*(.data.g_company_identifier)); KEEP(*(.data.g_local_bdaddr)); KEEP(*(.data.g_sw_subversion)); KEEP(*(.data.g_sw_version)); KEEP(*(.data.g_dts_hci_config)); KEEP(*(.data.g_macro_cfg_flags)); KEEP(*(.data.g_btc_mem_pool_size)); KEEP(*(.data.g_btc_sem_evt)); KEEP(*(.data.g_crypto_algo_support)); KEEP(*(.data.g_encrypt_ccmctr_setup_tab)); KEEP(*(.data.g_encrypt_key_deriv_tab)); KEEP(*(.data.g_encrypt_key_exchange_tab)); KEEP(*(.data.g_es_last_finetarget_time)); KEEP(*(.data.g_es_last_update_time)); KEEP(*(.data.g_duration_max_dft)); KEEP(*(.data.g_evt_task_ble_adv_default_aux_channel)); KEEP(*(.data.g_evt_task_ble_adv_default_aux_offset)); KEEP(*(.data.g_gle_isr_process_tbl)); KEEP(*(.data.g_ble_dft_min_valid_chnl_num)); KEEP(*(.data.g_ble_dft_req_map_update_timer)); KEEP(*(.data.g_adv_cmd_class)); KEEP(*(.data.g_gle_dft_min_valid_chnl_num)); KEEP(*(.data.g_gle_dft_req_map_upate_timer)); KEEP(*(.data.g_tx_pwr_log_lut_tbl));
+        . = ALIGN(8);
+#ifdef CONFIG_ULTRA_DEEP_SLEEP_ENABLE
+    } > RETENTION_ITCM AT > FLASH_PROGRAM
+#else
+    } > ITCM AT > FLASH_PROGRAM
+#endif
+    __romtext_end__ = .;
+    __romtext_size__ = __romtext_end__ - __romtext_begin__;
+
+    .plat_rom_bss (NOLOAD):
+    {
+        . = ALIGN(8);
+        __rombss_begin__ = .;
+        PLAT_ROM_FUNC(KEEP_SORT_BSS)
+#ifdef CONFIG_ULTRA_DEEP_SLEEP_ENABLE
+    } > RETENTION_ITCM
+#else
+    } > ITCM
+#endif
+    .btc_rom_bss (NOLOAD):
+    {
+        . = ALIGN(8);
+        BTC_ROM_FUNC(KEEP_SORT_BSS)
+        KEEP(*(.bss.g_pmu_cur_state)); KEEP(*(.bss.g_bg_sleep_boundary)); KEEP(*(.bss.g_bg_sleep_clk)); KEEP(*(.bss.g_bg_sleep_dur)); KEEP(*(.bss.g_bg_sleep_finecnt)); KEEP(*(.bss.g_bg_sleep_log_num)); KEEP(*(.bss.g_bgtp_extern_wakeup_flag)); KEEP(*(.bss.g_prevent_sleep_reasons)); KEEP(*(.bss.g_prevent_sleep_time)); KEEP(*(.bss.g_sleep_type)); KEEP(*(.bss.g_us_temp)); KEEP(*(.bss.g_ble_acl_connected_list)); KEEP(*(.bss.g_ble_isr_queue_head)); KEEP(*(.bss.g_ble_isr_queue_idx)); KEEP(*(.bss.g_ble_isr_queue_max_deep)); KEEP(*(.bss.g_timer_queue)); KEEP(*(.bss.g_dm_ble_desc)); KEEP(*(.bss.g_rand_addr)); KEEP(*(.bss.g_fal)); KEEP(*(.bss.g_rpa_engine_setup)); KEEP(*(.bss.g_dpc_env)); KEEP(*(.bss.g_btc_mem_pool)); KEEP(*(.bss.g_ecc_data)); KEEP(*(.bss.g_gle_rxpd_desc_env)); KEEP(*(.bss.g_rxpd_desc_env)); KEEP(*(.bss.g_sed_mgr)); KEEP(*(.bss.g_aes_queue)); KEEP(*(.bss.g_aes_state)); KEEP(*(.bss.g_ecc_queue)); KEEP(*(.bss.g_ecc_state)); KEEP(*(.bss.es_dur_params)); KEEP(*(.bss.g_es_finetarget_msk)); KEEP(*(.bss.g_evt_task_env_ble_initiate)); KEEP(*(.bss.g_evt_task_env_ble_scan)); KEEP(*(.bss.g_fsm_main)); KEEP(*(.bss.g_gle_isr_queue_head)); KEEP(*(.bss.g_gle_isr_queue_idx)); KEEP(*(.bss.g_gle_isr_queue_max_deep)); KEEP(*(.bss.g_lm_ble_adv_desc)); KEEP(*(.bss.g_lm_ae_comm_desc)); KEEP(*(.bss.g_lm_ble_initiate_desc)); KEEP(*(.bss.g_lm_ble_scan_desc)); KEEP(*(.bss.g_lm_comm_desc_env)); KEEP(*(.bss.g_rx_i_q_val));
+#ifdef CONFIG_ULTRA_DEEP_SLEEP_ENABLE
+    } > RETENTION_ITCM
+#else
+    } > ITCM
+#endif
+    .bth_rom_bss (NOLOAD):
+    {
+        . = ALIGN(8);
+        BTH_ROM_FUNC(KEEP_SORT_BSS)
+        KEEP(*(.bss.att_fsminst));
+        KEEP(*(.bss.gap_fsminst));
+        KEEP(*(.bss.g_adv_err_retry_num));
+        KEEP(*(.bss.g_multi_adv_inst_max));
+        KEEP(*(.bss.seq_count.21034));
+        KEEP(*(.bss.hci_fsminst));
+        KEEP(*(.bss.l2cap_fsminst));
+        KEEP(*(.bss.smp_fsminst));
+        KEEP(*(.bss.close_ev));
+        KEEP(*(.bss.ind_ev));
+        KEEP(*(.bss.ind_queue));
+        KEEP(*(.bss.ind_queue_lock));
+        KEEP(*(.bss.rx_done));
+        KEEP(*(.bss.rx_ref));
+        KEEP(*(.bss.g_localinfo_lock));
+        KEEP(*(.bss.g_quit_ev));
+        KEEP(*(.bss.handle_list));
+        KEEP(*(.bss.handle_list_lock));
+        . = ALIGN(8);
+#ifdef ROM_SYMBOL_LINK
+        . += 0x380;
+#endif
+        __rombss_end__ = .;
+#ifdef CONFIG_ULTRA_DEEP_SLEEP_ENABLE
+    } > RETENTION_ITCM
+#else
+    } > ITCM
+#endif
+    __rombss_size__ = __rombss_end__ - __rombss_begin__;
+
+    /*
+       We place some infrequently executed text sections into xip_section.lds to execute them in flash.
+       Note: The "#include "xip_section.lds"" must be placed before .plt_ramtext
+    */
+    #include "xip_section.lds"
+#ifdef CONFIG_ULTRA_DEEP_SLEEP_ENABLE
+    .retention_ram : ALIGN(32)
+    {
+        __retention_text_load__ = LOADADDR(.retention_ram);
+        __retention_text_begin__ = .;
+
+        /* LiteOS code */
+        *kernel/osal*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+
+        /* Drivers */
+        *sfc*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libdfx_log.a:log.*.o*  (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libdfx_log.a:log_buffer.*.o*  (.text .text* .rodata .rodata* .srodata .srodata*)
+        KEEP(*(.PMRAMCODE*))
+        *tcxo*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *utils/pm*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *gpio_port*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        EXCLUDE_FILE(*pm_porting*.o*) *middleware/chips/bs2x/pm*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+
+        /* Libs */
+        EXCLUDE_FILE(*los_heap*.o* *los_task*.o*) *liteos*.a:*.o*  (.text .text* .rodata .rodata* .srodata .srodata*)
+        . = ALIGN(32);
+    } > RETENTION_ITCM AT > FLASH_PROGRAM
+    __retention_text_end__ = .;
+    __retention_text_size__ = __retention_text_end__ - __retention_text_begin__;
+
+    .retention_ramdata : ALIGN(32)
+    {
+        . = ALIGN(8);
+        __retention_data_load__ = LOADADDR(.retention_ramdata);
+        __retention_data_begin__ = .;
+        /* Drivers */
+        *sfc*.a:*.o* (.data .data* .got .got* .igot .igot*)
+        *tcxo*.a:*.o* (.data .data* .got .got* .igot .igot*)
+        *keyscan*.a:*.o* (.data .data* .got .got* .igot .igot*)
+        *pinctrl*.a:*.o* (.data .data* .got .got* .igot .igot*)
+
+        *pm_sleep*.a:*.o* (.data .data* .got .got* .igot .igot*)
+        *pm_veto*.a:*.o* (.data .data* .got .got* .igot .igot*)
+        EXCLUDE_FILE(*pm_porting*.o* *pm_sys*.o*) *middleware/chips/bs2x/pm*.a:*.o* (.data .data* .got .got* .igot .igot*)
+        . = ALIGN(32);
+    } > RETENTION_ITCM AT > FLASH_PROGRAM
+    __retention_data_end__ = .;
+    __retention_data_size__ = __retention_data_end__ - __retention_data_begin__;
+
+    .retention_rambss(NOLOAD) :
+    {
+        __retention_bss_begin__ = .;
+        . = ALIGN(8);
+        *sfc*.a:*.o* (.bss .bss* .sbss .sbss*)
+        *tcxo*.a:*.o* (.bss .bss* .sbss .sbss*)
+        *keyscan*.a:*.o* (.bss .bss* .sbss .sbss*)
+        *pinctrl*.a:*.o* (.bss .bss* .sbss .sbss*)
+
+        *pm_sleep*.a:*.o* (.bss .bss* .sbss .sbss*)
+        *pm_veto*.a:*.o* (.bss .bss* .sbss .sbss*)
+        EXCLUDE_FILE(*pm_porting*.o* *pm_sys*.o*) *middleware/chips/bs2x/pm*.a:*.o* (.bss .bss* .sbss .sbss*)
+        EXCLUDE_FILE(*gpio_porting*.o*) *libgpio_port*.a:*.o* (.bss .bss* .sbss .sbss*)
+        . = ALIGN(8);
+    } > RETENTION_ITCM
+    __retention_bss_end__ = .;
+    __retention_bss_size__ = __retention_bss_end__ - __retention_bss_begin__;
+#endif /* CONFIG_ULTRA_DEEP_SLEEP_ENABLE */
+
+    .plt_ramtext : ALIGN(32)
+    {
+        /* Main code */
+        . = ALIGN(8);
+#ifdef ROM_CHECK
+        . = . + ROM_CHECK_OFFSET;
+#endif
+        __ramtext_load__ = LOADADDR(.plt_ramtext);
+        __ramtext_begin__ = .;
+#ifdef MEASURE_DIS
+        /* LiteOS code */
+        *kernel/osal*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+
+        *sfc*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *tcxo*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libdfx_log.a:log.*.o*  (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libdfx_log.a:log_buffer.*.o*  (.text .text* .rodata .rodata* .srodata .srodata*)
+
+        KEEP(*(.PMRAMCODE*))
+        EXCLUDE_FILE(*pm_porting*.o*) *middleware/chips/bs2x/pm*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *utils/pm*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *drivers/chips/bs2x/libclocks_porting.a:clocks_switch**.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+
+        /* Libs */
+        *(.itcm.text)
+#else
+        /* LiteOS code */
+        *kernel/osal*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+
+        /* Drivers */
+        *i2c*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libflash*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libhal_flash*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libflash_porting*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *spi*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *sfc*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *tcxo*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libdfx_log.a:log.*.o*  (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libdfx_log.a:log_buffer.*.o*  (.text .text* .rodata .rodata* .srodata .srodata*)
+        /* *utils/algorithm*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*) */
+
+        KEEP(*(.PMRAMCODE*))
+        EXCLUDE_FILE(*pm_porting*.o*) *middleware/chips/bs2x/pm*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *utils/pm*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *drivers/chips/bs2x/libclocks_porting.a:clocks_switch**.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+
+        /* config */
+        *chip_porting*.a:tick_timer*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *chip_porting*.a:interrupt*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *kernel/non_os*.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+
+        /* Libs */
+        *libc.a:*.o*  (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libm.a:*.o*  (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libsegger.a:*.o*  (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libgcc.a:*.o*  (.text .text* .rodata .rodata* .srodata .srodata*)
+        *(.itcm.text)
+        *libbase.a:*.o*  (.text .text*)
+        *libcsysdeps.a:*.o*  (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libinterrupt.a:*.o*  (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libriscv.a:*.o*  (.text .text* .rodata .rodata* .srodata .srodata*)
+#endif
+        KEEP(EXCLUDE_FILE(*upg_patch*.o* *diag_cmd_dispatch*.o*) *patch*.o* \
+        (.text .text* .rodata .rodata* .srodata .srodata*))
+        . = ALIGN(8);
+    }  > ITCM AT > FLASH_PROGRAM
+
+    .btc_ramtext :
+    {
+        /* Main code */
+        . = ALIGN(8);
+        __btc_ramtext_load__ = LOADADDR(.btc_ramtext);
+        __btc_ramtext_begin__ = .;
+        /* *libbgtp.a:*.o* (.text .text* .rodata .rodata* .srodata .srodata*) */
+        *libbgtp.a:evt_sched_ram**.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libbgtp.a:evt_sched_util_ram**.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libbgtp.a:evt_sched_mgr_ram**.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libbgtp.a:evt_prog_ram**.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libbgtp.a:dts_interrupt**.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libbgtp.a:bgtp_sleep_sw_ram**.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libbgtp.a:bt_thread**.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libbgtp.a:ble_isr_ram**.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        *libbgtp.a:gle_isr_ram**.o* (.text .text* .rodata .rodata* .srodata .srodata*)
+        __btc_ramtext_end__ = .;
+        . = ALIGN(32);
+    }  > ITCM AT > FLASH_PROGRAM
+    __btc_ramtext_size__ = __btc_ramtext_end__ - __btc_ramtext_begin__;
+}
+#include "usb.lds"
+__ramtext_end__ = .;
+__ramtext_size__ = __ramtext_end__ - __ramtext_begin__;
+
+SECTIONS
+{
+    /* Code and const data */
+#ifdef LITEOS_208
+    /* liteos compat linux initcall sections */
+    .initcall.init : {
+        . = ALIGN(16);
+        __initcall0_start = ABSOLUTE(.);
+        KEEP(*(SORT (.initcall0.init)))
+        __initcall0_end = ABSOLUTE(.);
+
+        __initcall1_start = ABSOLUTE(.);
+        KEEP(*(SORT (.initcall1.init)))
+        __initcall1_end = ABSOLUTE(.);
+
+        __initcall2_start = ABSOLUTE(.);
+        KEEP(*(SORT (.initcall2.init)))
+        __initcall2_end = ABSOLUTE(.);
+
+        __initcall3_start = ABSOLUTE(.);
+        KEEP(*(SORT (.initcall3.init)))
+        __initcall3_end = ABSOLUTE(.);
+
+        __initcall4_start = ABSOLUTE(.);
+        KEEP(*(SORT (.initcall4.init)))
+        __initcall4_end = ABSOLUTE(.);
+
+        __initcall5_start = ABSOLUTE(.);
+        KEEP(*(SORT (.initcall5.init)))
+        __initcall5_end = ABSOLUTE(.);
+
+        __initcall6_start = ABSOLUTE(.);
+        KEEP(*(SORT (.initcall6.init)))
+        __initcall6_end = ABSOLUTE(.);
+
+        __initcall7_start = ABSOLUTE(.);
+        KEEP(*(SORT (.initcall7.init)))
+        __initcall7_end = ABSOLUTE(.);
+        . = ALIGN(16);
+    } > FLASH_PROGRAM
+#endif
+    .text :
+    {
+        FILL(0xFF)
+        . = ALIGN(8);
+        __flash_text_begin_ = .;
+        *(.text)
+        *(.text*)
+        . = ALIGN(4);
+        __zinitcall_app_run_start = .;
+        KEEP (*(.zinitcall.app_run*.init))
+        __zinitcall_app_run_end = .;
+        . = ALIGN(4);
+        *(.flashtext)
+        *(.flashtext*)
+        *(bth_flash_data)
+        *(.rodata)
+        *(.rodata*)
+        KEEP (*(.rodata.info))
+        KEEP (*(.gdb_debug))
+        /* BTC_ITCM_CODE */
+        KEEP(*(.BTCRAMCODE*))
+        KEEP(*(.BGHLOWLATENCYCODE*))
+        KEEP(*(.LOWLATENCYCODE*))
+        __flash_text_end_ = .;
+        . = ALIGN(8);
+    } > FLASH_PROGRAM
+
+    g_ram_begin = ORIGIN(DTCM);
+    g_ram_size = LENGTH(DTCM);
+
+    /* Initialised data */
+    .data : ALIGN(32)
+    {
+        . = ALIGN(8);
+        FILL(0xFF)
+#ifdef ROM_CHECK
+        . = . + ROM_CHECK_OFFSET;
+#endif
+        __data_load__ = LOADADDR(.data);
+        __data_begin__ = .;
+        *(.data)
+        *(.data*)
+        *(.got)
+        *(.got*)
+        *(.igot)
+        *(.igot*)
+        _gp_ = . + 0x800;
+        *(.sdata)
+        *(.sdata*)
+        . = ALIGN(32);
+        __data_end__ = .;
+    } > DTCM AT > FLASH_PROGRAM
+    __data_size__ = __data_end__ - __data_begin__;
+
+
+    /* Uninitialised data */
+#ifndef LITEOS_208
+    /* Uninitialised data */
+    .bss (NOLOAD) :
+    {
+#else
+    .bss  (NOLOAD) : ALIGN(0x80)
+    {
+        PROVIDE (__int_stack_start = .);
+        *(.int_stack);
+        . = ALIGN(0x4);
+        PROVIDE (__int_stack_end = .);
+#endif
+        . = ALIGN(8);
+        __bss_begin__ = .;
+        *(.bss)
+        *(.bss*)
+        *(.sbss)
+        *(.sbss*)
+        *(.libc.errno)
+        *(COMMON)
+        . = ALIGN(8);
+        __bss_end__ = . ;
+    } > ITCM
+    __bss_size__ = __bss_end__ - __bss_begin__;
+
+
+    /* The internal heap uses whatever RAM space remains and so must be the last section for SRAM in the linker script. */
+    .heap (NOLOAD):
+    {
+        . = ALIGN(8);
+        g_intheap_begin = ABSOLUTE(.);
+        g_intheap_size = (ORIGIN(DTCM) + LENGTH(DTCM)) - g_intheap_begin;
+    } > DTCM
+
+    .preserve (NOLOAD):
+    {
+        . = ALIGN(8);
+        *(preserve)
+    } > PRESERVE
+
+#ifdef OS_DFX_SUPPORT
+    .os_info (NOLOAD):
+    {
+        . = ALIGN(8);
+        *(os_info)
+    } > ITCM_DFX
+#endif
+
+    .cputrace_mem (NOLOAD):
+    {
+        . = ALIGN(8);
+        KEEP(*(cputrace_mem))
+    } > CPUTRACE_RAM
+
+    PATCH_SYMBOL (NOLOAD):{
+        /* PATCH 函数符号，不占空间 */
+        _SPATCH_HTEXT = .;
+        KEEP(*(patch.hard))
+        _EPATCH_HTEXT = .;
+        KEEP(*(patch.soft))
+    } > SYMBOL_UNREACH
+}

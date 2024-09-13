@@ -1,0 +1,9 @@
+#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) @CompanyNameMagicTag 2022-2022. All rights reserved.
+#===============================================================================
+config PM_SUPPORT_CLOCK_CRG_API
+    bool
+    prompt "SUPPORT CLOCK CRG API."
+    default y
+    depends on DRIVER_SUPPORT_PM

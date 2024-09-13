@@ -1,0 +1,40 @@
+#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) @CompanyNameMagicTag 2022-2022. All rights reserved.
+#===============================================================================
+choice
+    prompt "Select keyscan type"
+    default KEYSCAN_USE_FULL_KEYS_TYPE
+    config KEYSCAN_USE_FULL_KEYS_TYPE
+        bool "KEYSCAN use full keys type"
+    config KEYSCAN_USE_SIX_KEYS_TYPE
+        bool "KEYSCAN use six keys type"
+    config KEYSCAN_USER_CONFIG_TYPE
+        bool "KEYSCAN user config type"
+endchoice
+
+config KEYSCAN_ENABLE_COL
+    int
+    prompt "number of columns to start"
+    range 8 8 if KEYSCAN_USE_FULL_KEYS_TYPE = y
+    range 2 2 if KEYSCAN_USE_SIX_KEYS_TYPE = y
+    depends on DRIVER_SUPPORT_KEYSCAN
+
+config KEYSCAN_ENABLE_ROW
+    int
+    prompt "number of rows to start"
+    range 16 16 if KEYSCAN_USE_FULL_KEYS_TYPE = y
+    range 3 3   if KEYSCAN_USE_SIX_KEYS_TYPE = y
+    depends on DRIVER_SUPPORT_KEYSCAN
+
+config KEYSCAN_USE_LP
+    bool
+    prompt "KEYSCAN v150 uses key_int_lp register when it's going to sleep mode"
+    default n
+    depends on KEYSCAN_SUPPORT_SLEEP
+
+config KEYSCAN_ENABLE_REP_ALL_KEY
+    bool
+    prompt "KEYSCAN v150 report all keys reported"
+    default n
+    depends on DRIVER_SUPPORT_KEYSCAN

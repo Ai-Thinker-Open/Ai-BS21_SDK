@@ -1,0 +1,18 @@
+#===============================================================================
+# @brief    SLE feature config.
+# Copyright (c) @CompanyNameMagicTag 2023-2023. All rights reserved.
+#===============================================================================
+config FEATURE_GLE_LOW_LATENCY
+    bool
+    prompt "Using gle low latency feature."
+    default n
+
+config FEATURE_GLE_HADM
+    bool
+    prompt "Using gle hadm feature."
+    default n
+
+config FEATURE_GLE_PERFORMANCE_SUPPORT
+    bool
+    prompt "Using gle performance feature."
+    default n

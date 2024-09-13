@@ -1,0 +1,581 @@
+config DRIVERS_USB
+    bool "Enable USB"
+    default n
+    select CONFIG_DRIVERS_BASE if !CONFIG_DRIVERS_USB_DEVICE_NO_DRIVER_BASE
+    select CONFIG_HWI_WITH_ARG
+    help
+      Answer Y to enable LiteOS support usb.
+
+config DRIVERS_USB_HOST_DRIVER
+    bool "Enable USB HCD"
+    default y
+    depends on CONFIG_DRIVERS_USB
+    help
+      Answer Y to enable LiteOS to support usb host controller driver.
+
+# choice
+#     depends on CONFIG_DRIVERS_USB_HOST_DRIVER
+#     prompt "USB HCD"
+#     default y
+#     help
+#       Enable EHCI for USB 2.0.
+#       Enable XHCI for USB 3.0.
+
+# config DRIVERS_USB_HOST_EHCI
+#     bool "Enable EHCI HCD (USB 2.0)"
+#     depends on CONFIG_DRIVERS_USB
+
+# config DRIVERS_USB_HOST_OHCI
+#     depends on DRIVERS_USB_HOST_EHCI
+#     default n
+#     bool "Enable OHCI Companion HCD (USB 1.1)"
+
+# config DRIVERS_USB_HOST_XHCI
+#     bool "Enable XHCI HCD (USB 3.0)"
+#     depends on DRIVERS_USB
+
+# endchoice
+
+config DRIVERS_USB_FIFO
+    bool
+    default n
+    depends on DRIVERS_USB && DRIVERS_USB_HOST_DRIVER
+
+config DRIVERS_USB_DEVICE_CLASS_DRIVERS
+    bool "Enable USB Device Class Drivers"
+    default y
+    depends on DRIVERS_USB && DRIVERS_USB_HOST_DRIVER
+    help
+      Answer Y to enable LiteOS to support usb device class drivers.
+
+menu "USB Device Class Drivers"
+    depends on DRIVERS_USB_DEVICE_CLASS_DRIVERS
+config DRIVERS_USB_MASS_STORAGE
+    bool "Enable USB Mass Storage Support"
+    default y
+    depends on DRIVERS_USB_DEVICE_CLASS_DRIVERS && FS_VFS
+    select DRIVER_DISK
+    help
+      Say Y here if you want to connect USB mass storage devices to your system's USB port.
+
+config DRIVERS_USB_RNDIS_HOST
+    bool "Enable USB Rndis Host Support"
+    default y
+    depends on DRIVERS_USB_DEVICE_CLASS_DRIVERS && NET_LWIP_SACK
+    help
+      Say Y here if you want to connect USB Rndis Host devices to your system's USB port.
+
+config DRIVERS_USB_4G_MODEM
+    bool "Enable USB 4G Modem Support"
+    default y
+    depends on DRIVERS_USB_DEVICE_CLASS_DRIVERS && NET_LWIP_SACK && FS_VFS && COMPAT_LINUX
+    help
+      Say Y here if you want to connect USB 4G devices to your system's USB port.
+
+config DRIVERS_USB_SERIAL
+    bool "Enable USB Serial Converter Support"
+    default y
+    depends on DRIVERS_USB_DEVICE_CLASS_DRIVERS && FS_VFS
+    help
+      Say Y here if you want to connect USB serial devices to your system's USB port.
+
+config DRIVERS_USB_ETHERNET
+    bool "Enable USB Ethernet Support"
+    depends on NET_LWIP_SACK && DRIVERS_USB_DEVICE_CLASS_DRIVERS
+    help
+      Say Y here if you want to connect USB ethernet devices to your system's USB port.
+
+config DRIVERS_USB_WIRELESS
+    bool "Enable USB Wireless Device Support"
+    depends on NET_LWIP_SACK && DRIVERS_USB_DEVICE_CLASS_DRIVERS
+    help
+      Say Y here if you want to connect usb-wifi devices to your system's USB port.
+
+config DRIVERS_USB_HOST_UVC_CLASS
+    bool "Enable USB Host UVC Support"
+    depends on DRIVERS_USB_DEVICE_CLASS_DRIVERS && FS_VFS && COMPAT_LINUX
+    help
+      Say Y here if you want to connect USB Host UVC devices to your system's USB port.
+
+config DRIVERS_USB_HOST_HID
+    bool "Enable USB Host HID Support"
+    select DRIVERS_USB_FIFO
+    depends on DRIVERS_USB_DEVICE_CLASS_DRIVERS && FS_VFS
+    help
+      Say Y here if you want to connect USB Host HID devices to your system's USB port.
+endmenu
+
+config DRIVERS_USB_DRIVER
+    bool "Enable USB Controller"
+    select DRIVERS_USB_GADGET
+    default y
+    depends on DRIVERS_USB
+    help
+      Answer Y to enable LiteOS to support device controller driver.
+
+menu "USB Controller Config"
+    depends on DRIVERS_USB_DRIVER
+
+choice
+    depends on DRIVERS_USB_DRIVER
+    prompt "Controller"
+    default DRIVERS_USB2_DEVICE_CONTROLLER
+    help
+      This selects the usb(ehci/xhci) family usb device.
+      Say Y to enable usb2.0 or usb3.0 controller driver.
+
+config DRIVERS_USB2_DEVICE_CONTROLLER
+    bool "Enable USB2.0 Device Controller"
+
+config DRIVERS_USB2_PORT_DISCONNECT
+    bool "Enable USB Port Disconnect Check"
+    default n
+    depends on DRIVERS_USB2_DEVICE_CONTROLLER
+    help
+      If disconnect interrupt reporting is not supported,
+      you can enable this feature to check port disconnect and perform corresponding disconnect operations,
+      currently only used to detect usb disconnection status in device uvc mode.
+
+config DRIVERS_USB2_ULPI_INTERFANCE
+    bool "Enable USB PHY ULPI Interface"
+    default n
+    depends on DRIVERS_USB2_DEVICE_CONTROLLER
+    help
+      If the USB PHY chip is external mounting, enable ULPI.
+      If the USB PHY is integrated in the chip, disable ULPI.
+
+config DRIVERS_USB2_OTG_DFIFO_DYNAMIC
+    bool "Enable Dynamic FIFO Sizing"
+    default n
+    depends on DRIVERS_USB2_DEVICE_CONTROLLER
+    help
+      Requires SOC to specify whether dynamic FIFO sizing is enabled.
+
+#
+# Applies to IN and OUT endpoints, this value is in bytes.
+# The application must set this field with the maximum packet size for the current logical endpoint.
+# If the DfifoDepth value is small, the maximum packet value can be appropriately reduced according
+# to the business.
+#
+menu "USB Endpoints Max Packet Size"
+    depends on DRIVERS_USB2_OTG_DFIFO_DYNAMIC
+
+config DRIVERS_USB2_OUT_EP_MPS
+    int "OUT Endpoints Max Packet Size"
+    range 64 1024
+    default 512
+
+config DRIVERS_USB2_IN_EP_INDEX1_MPS
+    int "IN Endpoint Index1 Max Packet Size"
+    range 64 1024
+    default 256
+    depends on (USB_IN_EP_NUM > 0)
+
+
+config DRIVERS_USB2_IN_EP_INDEX2_MPS
+    int "IN Endpoint Index2 Max Packet Size"
+    range 64 1024
+    default 256
+    depends on (USB_IN_EP_NUM > 1)
+
+config DRIVERS_USB2_IN_EP_INDEX3_MPS
+    int "IN Endpoint Index3 Max Packet Size"
+    range 64 1024
+    default 256
+    depends on (USB_IN_EP_NUM > 2)
+
+endmenu
+
+config DRIVERS_USB_DEVICE_CUSTOM_CTRLREQ_BUF_SIZE
+    bool "Enable Custom EP0 Ctrlreq Buffer Size"
+    default n
+    depends on DRIVERS_USB2_DEVICE_CONTROLLER
+
+config DRIVERS_USB_DEVICE_CTRLREQ_BUF_SIZE
+    int "USB EP0 Ctrlreq Buffer Size"
+    default 4096
+    depends on DRIVERS_USB_DEVICE_CUSTOM_CTRLREQ_BUF_SIZE
+    help
+      This represents the ctrlreq buffer size.
+      Protocol loading may fail when the configuration is too small.
+
+config DRIVERS_USB3_DEVICE_CONTROLLER
+    bool "Enable USB3.0 Device Controller"
+
+choice
+    depends on DRIVERS_USB3_DEVICE_CONTROLLER
+    prompt "USB Mode"
+    default DRIVERS_USB3_DEVICE_USB_MODE_USB_3_0
+
+config DRIVERS_USB3_DEVICE_USB_MODE_USB_1_1
+    bool "USB 1.1"
+
+config DRIVERS_USB3_DEVICE_USB_MODE_USB_2_0
+    bool "USB 2.0"
+
+config DRIVERS_USB3_DEVICE_USB_MODE_USB_3_0
+    bool "USB 3.0"
+
+endchoice
+
+config USB_PHY_SUSPEND_NOT_SUPPORTED
+    bool "Disable USB PHY Suspend"
+    depends on DRIVERS_USB3_DEVICE_CONTROLLER
+    help
+      Say Y here if you are debugging on the FPGA platform.
+
+endchoice
+
+menuconfig DRIVERS_USB_DEVICE_SLAVE_CONFIG
+    bool "Slave Core Extra Borard Configuration"
+    default n
+    depends on DRIVERS_USB2_DEVICE_CONTROLLER || DRIVERS_USB3_DEVICE_CONTROLLER
+
+if DRIVERS_USB_DEVICE_SLAVE_CONFIG
+
+config USB_OUT_EP_NUM
+    int "USB Out Endpoints Number"
+    range 1 15
+    default 2
+    help
+      This represents usb out endpoints number.
+
+config USB_IN_EP_NUM
+    int "USB In Endpoints Number"
+    range 1 15
+    default 4
+    help
+      This represents usb in endpoints number.
+
+if DRIVERS_USB3_DEVICE_CONTROLLER
+
+config USB_GEVENT_BUF_NUM
+    int "USB Event Buffer Number"
+    default 0
+    help
+      This represents the device gevent buffer number.
+
+config USB_DEPCFG_INTR_NUM
+    int "USB DEPCFG Interrupt Number"
+    default 0
+    help
+      This represents DEPCFG parameter1 interrupt number.
+
+endif
+
+config USB_DMA_OFFSET
+    hex "USB DMA Address Offset"
+    default 0x0
+    help
+      This represents DMA address offset, the value is decided by hardware design.
+endif
+
+endmenu
+
+config DRIVERS_USB_GADGET
+    bool "Enable USB Gadget Support"
+    default y
+    depends on DRIVERS_USB && DRIVERS_USB_DRIVER
+    help
+      Answer Y to enable LiteOS to support usb peripheral devices.
+      Enable this configuration option if you want to run LiteOS inside a USB peripheral device.
+
+menu "USB Gadget Drivers"
+depends on DRIVERS_USB_GADGET
+
+config DRIVERS_USB_MASS_STORAGE_GADGET
+    bool "Enable USB Mass Storage Gadget"
+    depends on FS_VFS && COMPAT_LINUX
+    select DRIVER_DISK
+
+config DRIVERS_USB_UVC_GADGET
+    bool "Enable USB Video Class Gadget"
+    depends on DRIVERS_USB_GADGET
+    help
+      If all formats are not selected, YUYV format is enabled by default.
+
+config DRIVERS_USB_UVC_IOCTL
+    bool "Enable USB Video Class Ioctl Mode"
+    default n
+    depends on (DRIVERS_USB_UVC_GADGET || DRIVERS_USB_CAMERA_GADGET) && FS_VFS
+
+choice
+    prompt "UVC Version"
+    depends on DRIVERS_USB_UVC_GADGET || DRIVERS_USB_CAMERA_GADGET
+    default DRIVERS_USB_UVC_GADGET_VER_1_1
+    help
+      This selects the uvc v1.0 or v1.1.
+
+config DRIVERS_USB_UVC_GADGET_VER_1_1
+    bool "UVC 1.1"
+config DRIVERS_USB_UVC_GADGET_VER_1_0
+    bool "UVC 1.0"
+
+endchoice
+
+menu "UVC Format"
+    depends on DRIVERS_USB_UVC_GADGET || DRIVERS_USB_CAMERA_GADGET
+
+config DRIVERS_USB_UVC_GADGET_YUYV
+    bool "YUYV Format"
+    default y
+
+config DRIVERS_USB_UVC_GADGET_NV12
+    bool "NV12 Format"
+    default n
+
+config DRIVERS_USB_UVC_GADGET_NV21
+    bool "NV21 Format"
+    default n
+
+config DRIVERS_USB_UVC_GADGET_MJPEG
+    bool "MJPEG Format"
+    default y
+
+config DRIVERS_USB_UVC_GADGET_H264
+    bool "H264 Format"
+    default y
+
+config DRIVERS_USB_UVC_GADGET_H265
+    bool "H265 Format"
+    default n
+
+endmenu
+
+choice
+    depends on DRIVERS_USB_UVC_GADGET || DRIVERS_USB_CAMERA_GADGET
+    prompt "Transter Mode"
+    default DRIVERS_USB_UVC_GADGET_BULK
+    help
+      This selects the uvc transter mode.
+      Say Y to enable isochronous or bulk mode.
+
+config DRIVERS_USB_UVC_GADGET_ISOC
+    bool "Isochronous Mode"
+
+config DRIVERS_USB_UVC_GADGET_BULK
+    bool "Bulk Mode"
+
+endchoice
+
+config DRIVERS_USB_UAC_GADGET
+    bool "Enable USB Audio Class Gadget"
+    depends on DRIVERS_USB_GADGET
+
+choice
+    depends on DRIVERS_USB_UAC_GADGET || DRIVERS_USB_UAC_HID_GADGET
+    prompt "UAC Version"
+    default DRIVERS_USB_UAC_GADGET_VER_1_0
+    help
+      This selects the uac version.
+      Say Y to enable v1.0 or v2.0.
+
+config DRIVERS_USB_UAC_GADGET_VER_1_0
+    bool "UAC1.0"
+
+config DRIVERS_USB_UAC_GADGET_VER_1_0_SPEAKER
+    bool "Enable USB Audio1.0 Speaker"
+    default n
+    depends on DRIVERS_USB_UAC_GADGET_VER_1_0
+    help
+      Speaker disabled by default.
+      Say Y to enable usb audio1.0 speaker.
+
+config DRIVERS_USB_UAC_GADGET_VER_2_0
+    bool "UAC2.0"
+
+endchoice
+
+config DRIVERS_USB_CAMERA_GADGET
+    bool "Enable USB Camera Class Gadget"
+    depends on DRIVERS_USB_GADGET && !DRIVERS_USB_UAC_GADGET_VER_1_0_SPEAKER && !DRIVERS_USB_UAC_GADGET_VER_2_0
+    help
+      Only UVC and UAC1.0 microphones are supported.If all UVC formats are not selected, YUYV format is enabled by default.
+
+config DRIVERS_USB_DFU_GADGET
+    bool "Enable USB Dfu Gadget"
+    depends on DRIVERS_USB_GADGET
+
+config DRIVERS_USB_DFU_DOWNLOAD_CALLBACK
+    bool "Enable USB Dfu Download Callback"
+    default n
+    depends on DRIVERS_USB_DFU_GADGET
+    help
+      Set y to allow users to use download callback to process data from host. For example, write dfu data to flash.
+
+config DRIVERS_USB_DFU_FINISH_EVENT
+    bool "Enable USB Dfu Finish Event"
+    default n
+    depends on DRIVERS_USB_DFU_GADGET
+    help
+      Set y allows the user to call the blocking interface to wait for the event that the data download is completed.
+      Note that this option must be disabled in the case of Non-OS.
+
+config DRIVERS_USB_DFU_DRIVE_FREE
+    bool "Enable WinUSB Dfu Drive-free"
+    default y
+    depends on DRIVERS_USB_DFU_GADGET
+    help
+      Set y to enable Drive-free loading of DFU devices only in the windows.
+      This function is supported only in Windows 7 and later versions.
+
+config DRIVERS_USB_SERIAL_GADGET
+    bool "Enable USB Serial Gadget"
+    depends on DRIVERS_USB_GADGET
+
+choice
+    prompt "Serial Interface"
+    depends on DRIVERS_USB_SERIAL_GADGET || DRIVERS_USB_ETH_SER_GADGET || DRIVERS_USB_ACM_HID_GADGET
+    default DRIVERS_USB_SERIAL_VFS_INTERFACE
+    help
+      This selects the type of Serial interface.
+
+config DRIVERS_USB_SERIAL_VFS_INTERFACE
+    bool "Enable Serial VFS Interface"
+    depends on FS_VFS
+    help
+      Use the VFS interface only when the VFS is enable.
+
+config DRIVERS_USB_SERIAL_FUNC_INTERFACE
+    bool "Enable Serial External Interface"
+    help
+      Use the function interface, whether the VFS is enabled or not.
+
+endchoice
+
+choice
+    prompt "Serial Mode"
+    depends on DRIVERS_USB_SERIAL_GADGET || DRIVERS_USB_ETH_SER_GADGET || DRIVERS_USB_ACM_HID_GADGET
+    default DRIVERS_USB_SERIAL_GADGET_DEFAULT
+    help
+      This selects the serial mode.
+
+config DRIVERS_USB_SERIAL_GADGET_DEFAULT
+    bool "Default Serial"
+
+config DRIVERS_USB_SERIAL_GADGET_DUAL
+    bool "Dual Serial"
+
+endchoice
+
+config DRIVERS_USB_ETHERNET_GADGET
+    bool "Enable USB Ethernet Class Gadget"
+    depends on DRIVERS_USB_GADGET && NET_LWIP_SACK && COMPAT_LINUX
+
+config DRIVERS_USB_ETH_SER_GADGET
+    bool "Enable USB Ethernet & Serial Gadget"
+    depends on DRIVERS_USB_GADGET && SHELL && NET_LWIP_SACK && KERNEL_CONSOLE
+
+config DRIVERS_USB_HID_GADGET
+    bool "Enable USB HID Class Gadget"
+    depends on DRIVERS_USB_GADGET
+
+choice
+    prompt "HID Interface"
+    depends on DRIVERS_USB_HID_GADGET || DRIVERS_USB_UAC_HID_GADGET || DRIVERS_USB_ACM_HID_GADGET
+    default DRIVERS_USB_HID_VFS_INTERFACE
+    help
+      This selects the type of HID interface.
+
+config DRIVERS_USB_HID_VFS_INTERFACE
+    bool "Enable HID VFS Interface"
+    depends on FS_VFS
+    help
+      Use the VFS interface, but only one HID report can be set.
+
+config DRIVERS_USB_HID_FUNC_INTERFACE
+    bool "Enable HID External Interface"
+    help
+      Use the function interface, up to two HID reports can be set.
+
+config DRIVERS_USB_HID_REPORT_MAP_NUM
+    int "HID Report Map Num"
+    default 2
+    depends on DRIVERS_USB_HID_FUNC_INTERFACE
+    help
+      Configure the number of HID report maps.
+
+config DRIVERS_USB_HID_POLLING_REPORTS
+    bool "Enable HID Polling Reports"
+    default n
+    depends on DRIVERS_USB2_DEVICE_CONTROLLER && DRIVERS_USB_HID_FUNC_INTERFACE
+    help
+      Use USB SOF interrupt to send HID data.
+
+config DRIVERS_USB_HID_CUSTOM
+    bool "Use custom HID"
+    default n
+    depends on DRIVERS_USB2_DEVICE_CONTROLLER && DRIVERS_USB_HID_FUNC_INTERFACE
+    help
+      Use custom HID
+
+endchoice
+
+config DRIVERS_USB_HID_INPUT_REPORT_LEN
+    int "HID Input Report Length"
+    default 12
+    depends on DRIVERS_USB_HID_GADGET || DRIVERS_USB_UAC_HID_GADGET || DRIVERS_USB_ACM_HID_GADGET
+    help
+      Maximum length of the sent HID report.
+      If the memory is a non-cache attribute, this value must be aligned by 4 bytes.
+      If the memory is a cache attribute, this value must be aligned by USB_CACHE_ALIGN_SIZE.
+
+config DRIVERS_USB_HID_OUTPUT_REPORT
+    bool "Enable HID Output Report Transfer"
+    default y
+    depends on DRIVERS_USB_HID_GADGET || DRIVERS_USB_UAC_HID_GADGET || DRIVERS_USB_ACM_HID_GADGET
+    help
+      Set y to support SET_REPORT request, receive output report sent by host, such as keyboard lights.
+      Set n if hid report table has no output report feature, such as mouse.
+
+choice
+    prompt "select HID output report function"
+    depends on DRIVERS_USB_HID_OUTPUT_REPORT
+    default DRIVERS_USB_HID_OUTPUT_REPORT_EVENT
+    help
+        This selects the type of output report.
+
+config DRIVERS_USB_HID_OUTPUT_REPORT_EVENT
+    bool "Use stack event to recieve hid data"
+        default n
+        depends on DRIVERS_USB_HID_OUTPUT_REPORT
+
+config DRIVERS_USB_HID_OUTPUT_REPORT_CALLBACK
+    bool "Use callback to recieve hid data"
+      default n
+      depends on DRIVERS_USB_HID_OUTPUT_REPORT
+
+endchoice
+
+config DRIVERS_USB_UAC_HID_GADGET
+      bool "Enable USB UAC & HID Gadget"
+      default n
+      depends on DRIVERS_USB_UAC_GADGET && DRIVERS_USB_HID_GADGET
+  
+config DRIVERS_USB_ACM_HID_GADGET
+    bool "Enable USB Serial & HID Gadget"
+    depends on DRIVERS_USB_GADGET
+  
+endmenu
+
+if DRIVERS_USB_GADGET
+config DRIVERS_USB_COMPOSITE_GADGET
+    bool
+    default y
+endif
+
+config BASE_CORE_TICK_PER_SECOND
+    int "Tick Value Per Second"
+    default 100
+    help
+      This represents the tick value per second.
+
+config DRIVERS_USB_DEVICE_NO_DRIVER_BASE
+    bool
+    help
+        This option will allow use usb device driver without driver base framework.
+        It needs to be manual selected by the platform. If this option is selected,
+        platform also needs to define those neccessay usb device marcros.
+
+        Select this if you want to reduce code size by disabling driver base.
+        Note that DRIVERS_BASE must be manually disabled.

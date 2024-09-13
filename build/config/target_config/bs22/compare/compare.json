@@ -1,0 +1,10 @@
+[
+   {
+      "targets":[
+         "<out_root>/<chip>/acore/standard-bs22-asic",
+         "<out_root>/<chip>/acore/standard-bs22-asic-btc-only",
+         "<out_root>/<chip>/acore/standard-bs22-asic-tag"
+      ],
+      "name": "application_rom.bin"
+   }
+]

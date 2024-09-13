@@ -1,0 +1,120 @@
+# ===============================================================================
+# @brief    cmake make file
+# Copyright (c) CompanyNameMagicTag 2022-2022. All rights reserved.
+# ===============================================================================
+
+set(_CHIP "${CHIP}")
+
+if(${CHIP} STREQUAL "socmn1")
+    set(_CHIP "melody")
+endif()
+
+if(${CHIP} STREQUAL "sw21")
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bt/controller/CMakeLists.txt)
+        add_subdirectory(bt/controller btc)
+    elseif(EXISTS ${ROOT_DIR}/build/config/target_config/${_CHIP}/cmake/btc.cmake)
+        include(${ROOT_DIR}/build/config/target_config/${_CHIP}/cmake/btc.cmake)
+    endif()
+else()
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bt/controller/CMakeLists.txt)
+        add_subdirectory(bt/controller btc)
+    elseif(EXISTS ${ROOT_DIR}/libs_url/${_CHIP}/cmake/btc.cmake)
+        include(${ROOT_DIR}/libs_url/${_CHIP}/cmake/btc.cmake)
+    elseif(EXISTS ${BIN_DIR}/${_CHIP}/libs/bluetooth/btc/CMakeLists.txt)
+        add_subdirectory(${BIN_DIR}/${_CHIP}/libs/bluetooth/btc btc)
+    endif()
+endif()
+
+if(EXISTS ${BIN_DIR}/${_CHIP}/libs/bluetooth/bth_bluelite/CMakeLists.txt)
+    include(${BIN_DIR}/${_CHIP}/libs/bluetooth/bth_bluelite/CMakeLists.txt)
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bt/host/CMakeLists.txt)
+    add_subdirectory(bt/host bth)
+elseif(EXISTS ${ROOT_DIR}/libs_url/${_CHIP}/cmake/bth.cmake)
+    include(${ROOT_DIR}/libs_url/${_CHIP}/cmake/bth.cmake)
+elseif(EXISTS ${BIN_DIR}/${_CHIP}/libs/bluetooth/sleh/CMakeLists.txt)
+    include(${BIN_DIR}/${_CHIP}/libs/bluetooth/sleh/CMakeLists.txt)
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bt/host/audio/bth_audio/CMakeLists.txt)
+    add_subdirectory(bt/host/audio/bth_audio)
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bt/host/bt/bts/CMakeLists.txt)
+    add_subdirectory(bt/host/bt/bts)
+elseif(EXISTS ${ROOT_DIR}/libs_url/${_CHIP}/cmake/bts.cmake)
+    include(${ROOT_DIR}/libs_url/${_CHIP}/cmake/bts.cmake)
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bt/host/audio/bth_audio_service/CMakeLists.txt)
+    add_subdirectory(bt/host/audio/bth_audio_service)
+elseif(EXISTS ${BIN_DIR}/${PROJECT_CHIP_DIR}/melody/libs/bt/CMakeLists.txt)
+    add_subdirectory(${BIN_DIR}/melody/libs/bt bt)
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/nfc/CMakeLists.txt)
+    add_subdirectory(nfc)
+elseif(EXISTS ${ROOT_DIR}/libs_url/${_CHIP}/cmake/nfc.cmake)
+    include(${ROOT_DIR}/libs_url/${_CHIP}/cmake/nfc.cmake)
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bt/algorithm/posalg/CMakeLists.txt)
+    add_subdirectory(bt/algorithm/posalg)
+elseif(EXISTS ${ROOT_DIR}/libs_url/${_CHIP}/cmake/slem_posalg.cmake)
+    include(${ROOT_DIR}/libs_url/${_CHIP}/cmake/slem_posalg.cmake)
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bt/algorithm/app_alg/CMakeLists.txt)
+    add_subdirectory(bt/algorithm/app_alg)
+elseif(EXISTS ${ROOT_DIR}/libs_url/${_CHIP}/cmake/slem_appalg.cmake)
+    include(${ROOT_DIR}/libs_url/${_CHIP}/cmake/slem_appalg.cmake)
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/radar/alg_ai/CMakeLists.txt)
+    add_subdirectory(radar/alg_ai)
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/radar/plat/CMakeLists.txt)
+    add_subdirectory(radar/plat)
+elseif(EXISTS ${ROOT_DIR}/libs_url/${_CHIP}/cmake/radar.cmake)
+    include(${ROOT_DIR}/libs_url/${_CHIP}/cmake/radar.cmake)
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/glp/hiex_v300/CMakeLists.txt)
+    add_subdirectory(glp/hiex_v300)
+elseif(EXISTS ${ROOT_DIR}/libs_url/${_CHIP}/cmake/slp_client.cmake)
+    include(${ROOT_DIR}/libs_url/${_CHIP}/cmake/slp_client.cmake)
+endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bt/controller/chba/CMakeLists.txt)
+    add_subdirectory(bt/controller/chba chba)
+elseif(EXISTS ${ROOT_DIR}/libs_url/${_CHIP}/cmake/chba.cmake)
+    include(${ROOT_DIR}/libs_url/${_CHIP}/cmake/chba.cmake)
+endif()
+
+if(EXISTS ${ROOT_DIR}/libs_url/${_CHIP}/cmake/ohos.cmake)
+    include(${ROOT_DIR}/libs_url/${_CHIP}/cmake/ohos.cmake)
+endif()
+
+if(${CHIP} STREQUAL "sw21" AND ${CORE} STREQUAL "gnss_core")
+    set(target ${TARGET})
+    set(core ${CORE})
+    set(project_name ${CHIP})
+    set(system_name ${SYSTEM_NAME})
+    set(target_name ${TARGET_NAME})
+    set(GNSS_PE_SRCDIR "${CMAKE_CURRENT_SOURCE_DIR}/gnss/services20")
+    set(GNSS_ME_SRCDIR "${CMAKE_CURRENT_SOURCE_DIR}/gnss/me20")
+
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/gnss/me20/CMakeLists.txt)
+        add_subdirectory(gnss/me20)
+    elseif(EXISTS ${ROOT_DIR}/build/config/target_config/${_CHIP}/cmake/me20.cmake)
+        include(${ROOT_DIR}/build/config/target_config/${_CHIP}/cmake/me20.cmake)
+    endif()
+
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/gnss/services20/CMakeLists.txt)
+        add_subdirectory(gnss/services20)
+    elseif(EXISTS ${ROOT_DIR}/build/config/target_config/${_CHIP}/cmake/services20.cmake)
+        include(${ROOT_DIR}/build/config/target_config/${_CHIP}/cmake/services20.cmake)
+    endif()
+endif()

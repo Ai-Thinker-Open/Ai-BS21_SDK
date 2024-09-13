@@ -1,0 +1,21 @@
+#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) @CompanyNameMagicTag 2024-2024. All rights reserved.
+#===============================================================================
+config BT_UPG_ENABLE
+    bool
+    prompt "ENABLE BLE OTA."
+    default n
+    depends on MIDDLEWARE_SUPPORT_UPDATE
+
+config SLE_UPG_ENABLE
+    bool
+    prompt "ENABLE SLE OTA."
+    default n
+    depends on MIDDLEWARE_SUPPORT_UPDATE
+
+config OTA_LOG_ENABLE
+    bool
+    prompt "ENABLE OTA LOG."
+    default n
+    depends on MIDDLEWARE_SUPPORT_UPDATE

@@ -1,0 +1,18 @@
+config LOSCFG_PLATFORM
+    string
+    default "hc32f4a0_datacom"       if LOSCFG_PLATFORM_HC32F4A0_DATACOM
+
+choice
+    prompt "Board"
+    depends on LOSCFG_FAMILY_DATACOM
+    default LOSCFG_PLATFORM_HC32F4A0_DATACOM
+
+config LOSCFG_PLATFORM_HC32F4A0_DATACOM
+    bool "hc32f4a0_datacom"
+    select LOSCFG_ARCH_CORTEX_M4
+    select LOSCFG_CORTEX_M_NVIC
+    select LOSCFG_CORTEX_M_SYSTICK
+    select LOSCFG_USING_BOARD_LD
+    select LOSCFG_DRIVERS_UART_VENDOR
+
+endchoice

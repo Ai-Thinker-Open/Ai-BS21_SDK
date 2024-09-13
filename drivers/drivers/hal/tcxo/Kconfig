@@ -1,0 +1,10 @@
+#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) @CompanyNameMagicTag 2024-2024. All rights reserved.
+#===============================================================================
+
+config TCXO_WITH_TWO_DATA_REGS
+    bool
+    prompt "TCXO Calculated With Two Data Registers "
+    default n
+    depends on DRIVER_SUPPORT_TCXO

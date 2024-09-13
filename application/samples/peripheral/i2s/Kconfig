@@ -1,0 +1,85 @@
+#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) @CompanyNameMagicTag 2023-2023. All rights reserved.
+#===============================================================================
+config SAMPLE_SUPPORT_I2S_MASTER
+    bool
+    prompt "Support I2S Master Sample."
+    default n
+    depends on SAMPLE_SUPPORT_I2S
+    help
+        This option means support I2S Master Sample.
+
+config I2S_MASTER_BUS_ID
+    int
+    prompt "Choose I2S master bus id."
+    depends on SAMPLE_SUPPORT_I2S_MASTER
+    default 0
+
+config I2S_CLK_MASTER_PIN
+    int
+    prompt "Choose I2S CLK master pin."
+    depends on SAMPLE_SUPPORT_I2S_MASTER
+    default 13
+
+config I2S_WS_MASTER_PIN
+    int
+    prompt "Choose I2S WS master pin."
+    depends on SAMPLE_SUPPORT_I2S_MASTER
+    default 14
+
+config I2S_DO_MASTER_PIN
+    int
+    prompt "Choose I2S DO master pin."
+    depends on SAMPLE_SUPPORT_I2S_MASTER
+    default 15
+
+config I2S_DI_MASTER_PIN
+    int
+    prompt "Choose I2S DI master pin."
+    depends on SAMPLE_SUPPORT_I2S_MASTER
+    default 16
+
+config SAMPLE_SUPPORT_I2S_SLAVE
+    bool
+    prompt "Support I2S Slave Sample."
+    default n
+    depends on SAMPLE_SUPPORT_I2S
+    help
+        This option means support I2S Slave Sample.
+
+config I2S_SLAVE_BUS_ID
+    int
+    prompt "Choose I2S slave bus id."
+    depends on SAMPLE_SUPPORT_I2S_SLAVE
+    default 0
+
+config I2S_CLK_SLAVE_PIN
+    int
+    prompt "Choose I2S CLK slave pin."
+    depends on SAMPLE_SUPPORT_I2S_SLAVE
+    default 13
+
+config I2S_WS_SLAVE_PIN
+    int
+    prompt "Choose I2S WS slave pin."
+    depends on SAMPLE_SUPPORT_I2S_SLAVE
+    default 14
+
+config I2S_DO_SLAVE_PIN
+    int
+    prompt "Choose I2S DO slave pin."
+    depends on SAMPLE_SUPPORT_I2S_SLAVE
+    default 15
+
+config I2S_DI_SLAVE_PIN
+    int
+    prompt "Choose I2S DI slave pin."
+    depends on SAMPLE_SUPPORT_I2S_SLAVE
+    default 16
+
+config I2S_TRANSFER_LEN
+    int
+    prompt "Choose I2S transfer length."
+    depends on SAMPLE_SUPPORT_I2S
+    default 32

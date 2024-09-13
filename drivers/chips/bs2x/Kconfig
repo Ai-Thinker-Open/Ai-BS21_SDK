@@ -1,0 +1,22 @@
+#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) @CompanyNameMagicTag 2022-2022. All rights reserved.
+#===============================================================================
+config I2C_BUS_MAX_NUM
+    int
+    prompt "I2C Max Bus num, the BS2x chip supports a maximum of 2 buses."
+    range 1 2
+    default 1
+    depends on DRIVER_SUPPORT_I2C
+
+config SPI_BUS_MAX_NUM
+    int
+    prompt "SPI Max Bus num, the BS2x chip supports a maximum of 3 buses."
+    range 1 3
+    default 1
+    depends on DRIVER_SUPPORT_SPI
+
+config SUPPORT_LOG_THREAD
+    bool
+    prompt "CREATE LOG MAIN THREAD."
+    default y

@@ -1,0 +1,69 @@
+#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) @CompanyNameMagicTag 2023-2023. All rights reserved.
+#===============================================================================
+config PM_SLEEP_RECORD_ENABLE
+    bool
+    prompt "ENABLE SLEEP RECORD."
+    default y
+    depends on MIDDLEWARE_SUPPORT_PM
+
+config PM_POWER_GATING_ENABLE
+    bool
+    prompt "ENABLE POWERGATING."
+    default y
+    depends on MIDDLEWARE_SUPPORT_PM
+
+config PM_VETO_TRACK_ENABLE
+    bool
+    prompt "VETO ENABLE TRACK."
+    default y
+    depends on MIDDLEWARE_SUPPORT_PM
+
+config PM_LIGHT_SLEEP_THRESHOLD_MS
+    int
+    prompt "The light sleep time threshold."
+    default 10
+    depends on MIDDLEWARE_SUPPORT_PM
+
+config PM_DEEP_SLEEP_THRESHOLD_MS
+    int
+    prompt "The deep sleep time threshold."
+    default 20
+    depends on MIDDLEWARE_SUPPORT_PM
+
+config PM_DEBUG
+    bool
+    prompt "Enable DEBUG Record"
+    default y
+    depends on MIDDLEWARE_SUPPORT_PM
+
+config PM_FSM_TRACE_NUM
+    int
+    prompt "Number of FSM Traces"
+    default 32
+    depends on MIDDLEWARE_SUPPORT_PM
+
+config PM_ENABLE_WAKEUP_INTERRUPT
+    bool
+    prompt "Enable wakeup interrupt"
+    default y
+    depends on MIDDLEWARE_SUPPORT_PM
+
+config PM_SYS_SUPPORT
+    bool
+    prompt "Pm sys support, switch system (work,standby,sleep) state."
+    default n
+    depends on MIDDLEWARE_SUPPORT_PM
+
+config PM_SYS_SUPPORT_MSGQUEUE
+    bool
+    prompt "Pm sys support message queue."
+    default y
+    depends on MIDDLEWARE_SUPPORT_PM
+
+config PM_SYS_STACK_SIZE
+    int
+    prompt "Pm sys stack size."
+    default 2048
+    depends on PM_SYS_SUPPORT_MSGQUEUE

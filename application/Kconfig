@@ -1,0 +1,89 @@
+#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) @CompanyNameMagicTag 2023-2023. All rights reserved.
+#===============================================================================
+
+config USER_FIRMWARE_VERSION
+    string
+    prompt "User Defined Firmware Version"
+    default "0.0.0.1"
+    help
+        This is a user defined firmware version string.
+        The string must not exceed 40 characters.
+
+config SYSTEM_CONTROL_ENABLE
+    bool
+    prompt "Enable system control."
+    default n
+    help
+        This option means support system control config.
+
+if SYSTEM_CONTROL_ENABLE
+config POWER_SUPPLY_BY_LDO
+    bool
+    prompt "Power supply by ldo."
+    default n
+    depends on SYSTEM_CONTROL_ENABLE
+    help
+        This option means Power supply by ldo.
+
+config REDUCE_PERP_LS_FREQ
+    bool
+    prompt "Reduce the frequency of low-speed peripherals."
+    default n
+    depends on SYSTEM_CONTROL_ENABLE
+    help
+        This option means reduce the frequency of low-speed peripherals.
+
+config REDUCE_FREQ_DURING_WFI
+    bool
+    prompt "Reduce frequency during wfi."
+    default n
+    depends on SYSTEM_CONTROL_ENABLE
+    help
+        This option means reduce frequency during wfi.
+
+config ULTRA_DEEP_SLEEP_ENABLE
+    bool
+    prompt "Enable ultra-deep sleep."
+    default n
+    depends on SYSTEM_CONTROL_ENABLE
+    help
+        This option means support ultra-deep sleep.
+
+config PM_XO_FAST_START_ENABLE
+    bool
+    prompt "Enable xo fast start."
+    default n
+    depends on SYSTEM_CONTROL_ENABLE
+    help
+        This option means support xo fast start.
+
+config XO_32K_ENABLE
+    bool
+    prompt "Enable the xo 32k clock."
+    default n
+    depends on SYSTEM_CONTROL_ENABLE
+    help
+        This option means enable the xo 32k clock.
+
+config SUPPORT_CLOSE_ULP_WDT_DURING_SLP
+    bool
+    prompt "Support close ulp-wdt during sleep."
+    default n
+    depends on SYSTEM_CONTROL_ENABLE
+    help
+        This option means support close ulp-wdt during sleep.
+
+endif
+
+config SAMPLE_ENABLE
+    bool
+    prompt "Enable Sample."
+    default n
+    help
+        This option means support Samples.
+
+if SAMPLE_ENABLE
+osource "application/samples/Kconfig"
+endif

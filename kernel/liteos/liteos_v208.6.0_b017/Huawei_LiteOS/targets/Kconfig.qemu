@@ -1,0 +1,40 @@
+config LOSCFG_PLATFORM
+    string
+    default "qemu-virt-a53"   if LOSCFG_PLATFORM_QEMU_VIRT_A53_GIC_V2 || LOSCFG_PLATFORM_QEMU_VIRT_A53_GIC_V3
+    default "realview-pbx-a9" if LOSCFG_PLATFORM_PBX_A9
+
+choice
+    prompt "Board"
+    depends on LOSCFG_FAMILY_QEMU
+    default LOSCFG_PLATFORM_PBX_A9
+
+config LOSCFG_PLATFORM_PBX_A9
+    bool "realview-pbx-a9"
+    select LOSCFG_ARCH_CORTEX_A9
+    select LOSCFG_ARM_GIC_V2
+    select LOSCFG_ARM_PRIVATE_TIMER
+    select LOSCFG_ARM_SP804_HRTIMER
+    select LOSCFG_DRIVERS_UART_ARM_PL011
+    select LOSCFG_DRIVERS_UART_LITEOS
+
+config LOSCFG_PLATFORM_QEMU_VIRT_A53_GIC_V2
+    bool "qemu-virt-a53_gicv2"
+    select LOSCFG_ARCH_CORTEX_A53
+    select LOSCFG_ARCH_ARM_AARCH64
+    select LOSCFG_ARM_GIC_V2
+    select LOSCFG_ARM_GENERIC_TIMER
+    select LOSCFG_DRIVERS_USE_VENDOR_HISI_CAMERA
+    select LOSCFG_DRIVERS_UART_ARM_PL011
+    select LOSCFG_DRIVERS_UART_LINUX
+
+config LOSCFG_PLATFORM_QEMU_VIRT_A53_GIC_V3
+    bool "qemu-virt-a53_gicv3"
+    select LOSCFG_ARCH_CORTEX_A53
+    select LOSCFG_ARCH_ARM_AARCH64
+    select LOSCFG_ARM_GIC_V3
+    select LOSCFG_ARM_GENERIC_TIMER
+    select LOSCFG_DRIVERS_USE_VENDOR_HISI_CAMERA
+    select LOSCFG_DRIVERS_UART_ARM_PL011
+    select LOSCFG_DRIVERS_UART_LINUX
+
+endchoice

@@ -1,0 +1,38 @@
+#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) @CompanyNameMagicTag 2022-2022. All rights reserved.
+#===============================================================================
+
+choice
+    prompt "Choose Chip"
+    default CHIP_BS2X
+config CHIP_WS53
+    bool "ws53"
+
+config CHIP_WS63
+    bool "ws63"
+
+config CHIP_BS2X
+    bool "bs2x"
+endchoice
+
+if CHIP_WS53
+menu "Chip Configurations for ws53"
+    comment "Config ws53"
+    osource "drivers/chips/ws53/Kconfig"
+endmenu
+endif
+
+if CHIP_WS63
+menu "Chip Configurations for ws63"
+    comment "Config ws63"
+    osource "drivers/chips/ws63/Kconfig"
+endmenu
+endif
+
+if CHIP_BS2X
+menu "Chip Configurations for bs2x"
+    comment "bs2x chipset resource config"
+    osource "drivers/chips/bs2x/Kconfig"
+endmenu
+endif

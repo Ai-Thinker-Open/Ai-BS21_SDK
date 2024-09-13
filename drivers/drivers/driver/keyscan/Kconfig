@@ -1,0 +1,27 @@
+#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) @CompanyNameMagicTag 2022-2022. All rights reserved.
+#===============================================================================
+config KEYSCAN_REPORT_MAX_NUMS
+    int
+    prompt "The maximum number of key combinations that can be reported at one time, support 6/7/8/10"
+    default 6
+    depends on DRIVER_SUPPORT_KEYSCAN
+
+config KEYSCAN_SUPPORT_LPM
+    bool
+    prompt "KEYSCAN Support low power mode, suspend and resume."
+    default n
+    depends on DRIVER_SUPPORT_KEYSCAN
+
+config KEYSCAN_SUPPORT_SLEEP
+    bool
+    prompt "KEYSCAN Support low power mode, enter sleep."
+    default n
+    depends on DRIVER_SUPPORT_KEYSCAN
+
+config KEYSCAN_IDLE_WAIT_US
+    int
+    prompt "KEYSCAN Set a timer to enter sleep"
+    default 60000000
+    depends on DRIVER_SUPPORT_KEYSCAN

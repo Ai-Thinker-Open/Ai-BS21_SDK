@@ -1,0 +1,2 @@
+burn,name,start_bit,bit_width,value,lock
+0,DIE_ID,0,32,0xFFFFFFFF,PG0

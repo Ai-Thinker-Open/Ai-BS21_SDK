@@ -1,0 +1,15 @@
+#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) @CompanyNameMagicTag 2023-2023. All rights reserved.
+#===============================================================================
+config QDEC_A_PIN
+    int
+    prompt "Choose QDEC_A pin."
+    depends on SAMPLE_SUPPORT_QDEC
+    default 27
+
+config QDEC_B_PIN
+    int
+    prompt "Choose QDEC_B pin."
+    depends on SAMPLE_SUPPORT_QDEC
+    default 28

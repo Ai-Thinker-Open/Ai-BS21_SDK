@@ -1,0 +1,19 @@
+{
+	"size":{
+	    "flash_size" : "0x2000",
+        "page_size" : "0x1000"
+	},
+    "cores" :{
+        "app" : {
+            "page_nums" : 2,
+            "page_id_start" : "0x254D"
+        }
+    },
+	"acore_test_nv":{
+        "TYPE" :  "nv",
+        "CHIP" :  "bs21",
+        "CORE" :  "app",
+        "KERNEL_BIN" : "acore",
+        "COMPONENT" : ["app"]
+    }
+}

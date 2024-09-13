@@ -1,0 +1,23 @@
+config TEST_SUPPORT_SECURITY_UNIFIED
+    bool
+    prompt "security_unified test support"
+    default n
+    depends on TEST_SUPPORT_TESTSUITE
+
+choice
+    prompt "select the test layer"
+    depends on TEST_SUPPORT_SECURITY_UNIFIED
+    default SECURITY_UNIFIED_SERVICE_TEST
+    config SECURITY_UNIFIED_SERVICE_TEST
+        bool
+        prompt "security_unified test service layer"
+    config SECURITY_UNIFIED_DRV_TEST
+        bool
+        prompt "security_unified test drv layer"
+endchoice
+
+config SECURITY_UNIFIED_DRV_TEST_DEBUG
+    bool
+    prompt "security_unified test drv layer & support pke alg debug"
+    default n
+    depends on SECURITY_UNIFIED_DRV_TEST
