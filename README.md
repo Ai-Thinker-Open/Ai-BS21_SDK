@@ -78,7 +78,7 @@ git clone https://gitee.com/Ai-Thinker-Open/Ai-BS21_SDK.git
 
 ![alt text](doc/IMG/SDK2.png)
 
-首次导入需要选择芯片和开发板，芯片选择:***BS21-N1100E***,开发板保持默认：
+首次导入需要选择芯片和开发板，芯片选择:***BS21-N1100***,开发板保持默认：
 
 ![alt text](doc/IMG/SDK3.png)
 
